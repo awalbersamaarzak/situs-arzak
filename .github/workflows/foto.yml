@@ -1,0 +1,68 @@
+# Mengunduh foto situs dari sumbernya, mengecilkan ukurannya, membuang metadata (EXIF/GPS),
+# lalu menyimpannya di folder foto/. Jalan otomatis saat file ini berubah, atau manual dari tab Actions.
+name: Ambil foto situs
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/foto.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  foto:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pillow==11.0.0
+      - name: Unduh dan kecilkan foto
+        run: |
+          python - <<'PY'
+          import io, pathlib, urllib.request
+          from PIL import Image, ImageOps, ImageEnhance
+          I = 'https://introdental.id/uploads/gallery/'
+          # nama file, sumber, lebar maksimum (px)
+          FOTO = [
+              # Jembatan Suramadu — Sakurai Midori, Wikimedia Commons, CC BY 3.0 (diperkecil & warna dihangatkan; perubahan wajib disebut)
+              # dipakai sebagai foto kecil "Aslinya" di langkah 02 Peta ARZAK
+              ('suramadu-kecil',     'https://commons.wikimedia.org/wiki/Special:FilePath/Suramadu_Bridge_5.JPG?width=2400', 960, None, 'hangat'),
+              # Klinik Utama INTRO Dental — dipotong bagian tengah supaya lengkung lensa di tepi dan banner merek pihak ketiga hilang
+              ('intro-lobi-potong',  I + '1766034173_cca6f408b66af8667fce.jpeg', 1800, (0.34, 0.12, 0.93, 0.78)),
+              ('intro-ruang-potong', I + '1766033792_da64e3f6a7adcbc8fb90.jpeg', 1800, (0.24, 0.12, 0.80, 0.80)),
+          ]
+          out = pathlib.Path('foto'); out.mkdir(exist_ok=True)
+          for nama, url, lebar, *potong in FOTO:
+              req = urllib.request.Request(url, headers={'User-Agent': 'arzakbersama-site-build/1.0 (https://arzakbersama.com)'})
+              data = urllib.request.urlopen(req, timeout=90).read()
+              im = ImageOps.exif_transpose(Image.open(io.BytesIO(data))).convert('RGB')
+              if potong and potong[0]:
+                  l, t, r, b = potong[0]
+                  im = im.crop((int(l * im.width), int(t * im.height), int(r * im.width), int(b * im.height)))
+              if im.width > lebar:
+                  im = im.resize((lebar, round(im.height * lebar / im.width)), Image.LANCZOS)
+              if len(potong) > 1 and potong[1] == 'hangat':
+                  r_, g_, b_ = im.split()
+                  r_ = r_.point(lambda v: min(255, int(v * 1.05)))
+                  b_ = b_.point(lambda v: int(v * 0.93))
+                  im = ImageEnhance.Contrast(Image.merge('RGB', (r_, g_, b_))).enhance(1.08)
+              # disimpan tanpa EXIF: lokasi GPS dan data kamera tidak ikut
+              im.save(out / f'{nama}.jpg', 'JPEG', quality=80, optimize=True, progressive=True)
+              print(f'{nama}: {im.size[0]}x{im.size[1]}, {(out / f"{nama}.jpg").stat().st_size // 1024} KB')
+          # foto yang tidak ada lagi di daftar dihapus dari folder foto/
+          dipakai = {f'{f[0]}.jpg' for f in FOTO}
+          for f in out.glob('*.jpg'):
+              if f.name not in dipakai:
+                  f.unlink(); print('hapus', f.name)
+          PY
+      - name: Simpan ke repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A foto
+          git diff --cached --quiet || git commit -m "Foto situs (diunduh dan dikecilkan otomatis)"
+          git push
