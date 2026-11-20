@@ -30,6 +30,6 @@ Situs profil ARZAK — perusahaan induk. Satu halaman statis, tanpa build, ditay
 3. Naikkan angka `?v=` pada `import('/peta/peta.js?v=…')` di `index.html` supaya browser tidak memakai versi lama.
 4. Bila tampilan ringkasnya berubah, buat ulang `peta-poster.jpg`: jalankan server lokal di akar repo, buka `/peta/src/poster.html?poster`, lalu ambil tangkapan layar elemen `.peta-stage` pada skala 2× (hasil 2400×1200).
 
-Palet: kertas `#F7F1EA`, burgundy `#6E1E2B`, anggur gelap `#2A0B12`, emas `#C9A24B` (emas untuk teks di atas kertas: `#85621F`, papan nama: `#A58131`). Huruf: Plus Jakarta Sans untuk teks, Instrument Serif hanya untuk judul utama, angka tahun, huruf awal, dan pernyataan prinsip.
+Palet: kertas `#F7F1EA`, burgundy `#6E1E2B`, anggur gelap `#2A0B12`, emas `#C9A24B` (emas untuk teks di atas kertas: `#85621F`); papan nama ARZAK berwarna burgundy. Huruf: Plus Jakarta Sans untuk teks, Instrument Serif hanya untuk judul utama, angka tahun, huruf awal, dan pernyataan prinsip.
 
 Foto: Jembatan Suramadu oleh Sakurai Midori (Wikimedia Commons, CC BY 3.0, dipotong dan warnanya disesuaikan). Foto ruang klinik milik Klinik Utama INTRO Dental. Peta 3D memakai three.js (lisensi MIT; teks lisensinya ikut di akhir `peta/peta.js`).

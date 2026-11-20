@@ -96,12 +96,10 @@ h2, h3, .lead h1 { text-wrap: balance; }
 .nameplate {
   font-family: var(--sans); font-weight: 800;
   font-size: clamp(5.5rem, 25.5vw, 23rem);
-  line-height: .8; letter-spacing: -.03em; color: var(--burg);
+  line-height: .8; letter-spacing: -.01em; color: var(--burg);
   margin: clamp(.75rem, 2vw, 1.5rem) 0 clamp(.5rem, 1.6vw, 1.25rem) -.05em;
   white-space: nowrap;
 }
-/* jarak R–Z dirapatkan, Z–A dibiarkan longgar supaya kedua huruf tidak bersentuhan */
-.nameplate .kern { margin-left: -.06em; letter-spacing: 0; }
 .origin {
   display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1rem, 3vw, 2.5rem);
   border-top: 1px solid var(--rule-strong); padding-top: .9rem;
@@ -243,6 +241,7 @@ h2, h3, .lead h1 { text-wrap: balance; }
 .anat-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; border-bottom: 1px solid var(--rule-dark); padding-bottom: .9rem; }
 .anat-head h2 { font-size: clamp(1.5rem, 2.6vw, 2.25rem); font-weight: 700; letter-spacing: -.02em; }
 .anat-head span { color: var(--on-muted); font-size: .9375rem; }
+.anat-lede { font-family: var(--serif); font-size: clamp(1.75rem, 3.6vw, 3rem); line-height: 1.1; color: var(--on); max-width: 22ch; margin-top: clamp(1.5rem, 3.5vw, 2.5rem); }
 .anat-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(2rem, 5vw, 5rem); align-items: center; margin-top: clamp(2rem, 5vw, 3.5rem); }
 @media (max-width: 56rem) { .anat-grid { grid-template-columns: 1fr; } }
 .anat figure svg { width: 100%; height: auto; max-height: 34rem; overflow: visible; }
@@ -345,10 +344,10 @@ h2, h3, .lead h1 { text-wrap: balance; }
 <a class="skip" href="#isi">Lewati ke isi</a>
 
 <header class="wrap plate-name">
-  <div class="edition"><span>Perusahaan induk</span><span>Edisi pertama, November 2026</span></div>
-  <p class="nameplate">AR<span class="kern">ZAK</span></p>
+  <div class="edition"><span>Profil perusahaan</span><span>Edisi pertama, November 2026</span></div>
+  <p class="nameplate">ARZAK</p>
   <div class="origin">
-    <p>Memegang, mengarahkan, dan menjaga usaha untuk jangka panjang.</p>
+    <p>Perusahaan induk untuk layanan kesehatan dan usaha yang sejalan.</p>
     <p>Surabaya, Jawa Timur</p>
   </div>
 </header>
@@ -387,7 +386,7 @@ h2, h3, .lead h1 { text-wrap: balance; }
   <section class="wrap lead" aria-labelledby="judul">
     <h1 id="judul">Usaha yang dibangun pelan, dipegang lama, dan dirancang untuk diwariskan.</h1>
     <div class="dek">
-      <p>ARZAK adalah perusahaan induk yang sedang didirikan sebagai PT Arzak Selalu Bersama (dalam persiapan pendirian). Kepemilikannya tertutup dan tidak dibuka untuk umum.</p>
+      <p>ARZAK sedang didirikan sebagai PT Arzak Selalu Bersama (dalam persiapan pendirian). Kepemilikannya tertutup dan tidak dibuka untuk umum; data pengurus dan pemegang saham diberikan kepada bank, notaris, dan calon mitra melalui korespondensi resmi.</p>
       <p>Setelah aktanya terbit, di sinilah saham usaha yang kelak didirikan atau diambil alih, gedung dan peralatan, merek, dan standar kerja akan dipegang.</p>
     </div>
   </section>
@@ -426,7 +425,7 @@ h2, h3, .lead h1 { text-wrap: balance; }
               <li data-i="2">
                 <p class="k">02 · Selat Madura</p>
                 <h3>Jembatan Suramadu, 5,4 kilometer.</h3>
-                <p>Penghubung tempat kedudukan ARZAK dengan Madura, tempat usaha pertama kami berjalan sejak 2024.</p>
+                <p>Penghubung tempat kedudukan ARZAK dengan Madura, tempat usaha pertama dalam lingkup ARZAK berjalan sejak 2024.</p>
                 <figure class="aslinya">
                   <img src="/foto/suramadu-kecil.jpg" width="960" height="642" alt="Foto Jembatan Suramadu dengan dua pylon merahnya, dilihat dari pantai saat air surut" loading="lazy" decoding="async">
                   <figcaption>Jembatan aslinya. Foto: Sakurai Midori, Wikimedia Commons, CC BY 3.0, dipotong dan warnanya disesuaikan.</figcaption>
@@ -454,6 +453,7 @@ h2, h3, .lead h1 { text-wrap: balance; }
   <section class="dark anat" id="tanda" aria-labelledby="anat-judul">
     <div class="wrap">
       <div class="anat-head"><h2 id="anat-judul">Anatomi tanda ARZAK</h2><span>Gambar 2</span></div>
+      <p class="anat-lede">Modal tanpa tata kelola tidak membentuk apa pun.</p>
       <div class="anat-grid">
         <figure><svg viewBox="-34 -16 196 140" role="img" aria-label="Logo ARZAK dengan empat bagian bernomor: kaki kiri, kaki kanan, puncak, dan lengkung emas" xmlns="http://www.w3.org/2000/svg"><g class="mark-art">
 <defs>
@@ -475,9 +475,9 @@ h2, h3, .lead h1 { text-wrap: balance; }
 </g>
 </g><line class="lead-line" x1="-15.9" y1="41.0" x2="50.1" y2="52" stroke="#C9A24B" stroke-width=".7"/><circle class="badge" cx="50.1" cy="52" r="1.9" fill="#2A0B12" stroke="#C9A24B" stroke-width=".8"/><g class="badge"><circle cx="-22" cy="40" r="6.2" fill="#2A0B12" stroke="#C9A24B" stroke-width=".9"/><text x="-22" y="42.4" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-weight="700" font-size="6.6" fill="#C9A24B">1</text></g><line class="lead-line" x1="143.8" y1="80.0" x2="92.8" y2="80" stroke="#C9A24B" stroke-width=".7"/><circle class="badge" cx="92.8" cy="80" r="1.9" fill="#2A0B12" stroke="#C9A24B" stroke-width=".8"/><g class="badge"><circle cx="150" cy="80" r="6.2" fill="#2A0B12" stroke="#C9A24B" stroke-width=".9"/><text x="150" y="82.4" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-weight="700" font-size="6.6" fill="#C9A24B">2</text></g><line class="lead-line" x1="64.0" y1="-1.8" x2="64" y2="19" stroke="#C9A24B" stroke-width=".7"/><circle class="badge" cx="64" cy="19" r="1.9" fill="#2A0B12" stroke="#C9A24B" stroke-width=".8"/><g class="badge"><circle cx="64" cy="-8" r="6.2" fill="#2A0B12" stroke="#C9A24B" stroke-width=".9"/><text x="64" y="-5.6" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-weight="700" font-size="6.6" fill="#C9A24B">3</text></g><line class="lead-line" x1="-16.5" y1="101.1" x2="20.8" y2="81.4" stroke="#C9A24B" stroke-width=".7"/><circle class="badge" cx="20.8" cy="81.4" r="1.9" fill="#2A0B12" stroke="#C9A24B" stroke-width=".8"/><g class="badge"><circle cx="-22" cy="104" r="6.2" fill="#2A0B12" stroke="#C9A24B" stroke-width=".9"/><text x="-22" y="106.4" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-weight="700" font-size="6.6" fill="#C9A24B">4</text></g></svg></figure>
         <ol class="parts">
-          <li><span class="n" aria-hidden="true">1</span><div><b>Kaki kiri: modal.</b><p>Saham dan aset yang ditanam untuk jangka panjang, bukan untuk dijual cepat.</p></div></li>
-          <li><span class="n" aria-hidden="true">2</span><div><b>Kaki kanan: tata kelola.</b><p>Standar, pembukuan, dan prosedur tertulis. Satu kaki saja tidak membentuk huruf apa pun.</p></div></li>
-          <li><span class="n" aria-hidden="true">3</span><div><b>Puncak: satu kepemilikan.</b><p>Kepemilikan ARZAK tidak dipecah dan tidak dibuka untuk umum. Mitra masuk di tingkat usaha yang kelak dinaungi, tidak di ARZAK.</p></div></li>
+          <li><span class="n" aria-hidden="true">1</span><div><b>Kaki kiri: modal.</b><p>Saham dan aset dipegang untuk jangka panjang, tidak diperdagangkan.</p></div></li>
+          <li><span class="n" aria-hidden="true">2</span><div><b>Kaki kanan: tata kelola.</b><p>Standar, pembukuan, dan tiga pertanyaan sebelum masuk usaha baru.</p></div></li>
+          <li><span class="n" aria-hidden="true">3</span><div><b>Puncak: satu titik keputusan.</b><p>Arah ARZAK diputuskan di satu tempat, yaitu rapat pemegang sahamnya. Kepemilikannya tertutup; mitra masuk di tingkat usaha yang kelak dinaungi, tidak di ARZAK.</p></div></li>
           <li><span class="n" aria-hidden="true">4</span><div><b>Lengkung emas: yang kelak dinaungi.</b><p>Saham usaha, gedung dan peralatan, merek, dan cara kerja yang kami susun.</p></div></li>
         </ol>
       </div>
@@ -488,7 +488,7 @@ h2, h3, .lead h1 { text-wrap: balance; }
     <div class="sec-head">
       <p class="kicker">Peran</p>
       <h2 id="peran-judul">Yang akan dikerjakan ARZAK setelah akta terbit</h2>
-      <p class="intro">PT Arzak Selalu Bersama masih dalam persiapan pendirian. Sampai aktanya terbit, setiap usaha kami berjalan di bawah badan usahanya sendiri.</p>
+      <p class="intro">PT Arzak Selalu Bersama masih dalam persiapan pendirian. Sampai aktanya terbit, setiap usaha dalam lingkup ARZAK berjalan di bawah badan usahanya sendiri.</p>
     </div>
     <div class="reg-grid">
       <ol class="register">
@@ -588,7 +588,7 @@ h2, h3, .lead h1 { text-wrap: balance; }
           <dd>PT Arzak Selalu Bersama sedang dalam persiapan pendirian dan akan berkedudukan di Surabaya, Jawa Timur.</dd><dt>Bukan penawaran</dt>
           <dd>Halaman ini adalah profil perusahaan. ARZAK tidak menawarkan saham dan tidak menghimpun dana dari masyarakat.</dd></dl>
       <dl class="notes"><dt>Korespondensi</dt>
-          <dd>Untuk bank, notaris, calon mitra atau target pengambilalihan, serta calon dokter dan staf senior: <a href="mailto:awal@arzakbersama.com">awal@arzakbersama.com</a></dd><dt>Situs usaha kami</dt>
+          <dd>Untuk bank, notaris, calon mitra atau target pengambilalihan, serta calon dokter dan staf senior: <a href="mailto:awal@arzakbersama.com">awal@arzakbersama.com</a>. Data pengurus dan pemegang saham diberikan melalui korespondensi ini.</dd><dt>Usaha dalam lingkup ARZAK</dt>
           <dd>Perawatan gigi dan janji temu: <a href="https://introdental.id" rel="noopener">introdental.id</a>. Pertumbuhan klinik: <a href="https://nataarah.id" rel="noopener">nataarah.id</a>.</dd><dt>Foto dan huruf</dt>
           <dd>Jembatan Suramadu: Sakurai Midori, Wikimedia Commons, <a href="https://creativecommons.org/licenses/by/3.0/" rel="noopener license">CC BY 3.0</a>, dipotong dan warnanya disesuaikan. Ruang klinik: Klinik Utama INTRO Dental. Maket peta digambar dengan kode memakai three.js, lisensi MIT. Huruf Plus Jakarta Sans dan Instrument Serif, SIL Open Font License.</dd></dl>
     </div>
