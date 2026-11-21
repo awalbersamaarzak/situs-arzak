@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ARZAK — Selalu Bersama</title>
 <meta name="description" content="ARZAK adalah perusahaan induk yang sedang didirikan sebagai PT Arzak Selalu Bersama (dalam persiapan pendirian), untuk usaha yang dibangun pelan dan dipegang lama.">
-<meta name="theme-color" content="#F7F1EA">
+<meta name="theme-color" content="#2A0B12">
 <link rel="canonical" href="https://arzakbersama.com/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -20,7 +20,7 @@ if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'WebGLRenderingCo
 <meta property="og:locale" content="id_ID">
 <meta property="og:site_name" content="ARZAK">
 <meta property="og:title" content="ARZAK — Selalu Bersama">
-<meta property="og:description" content="Usaha yang dibangun pelan, dipegang lama, dan dirancang untuk diwariskan.">
+<meta property="og:description" content="Usaha yang dibangun pelan, dipegang lama, dan dirancang untuk jangka panjang.">
 <meta property="og:url" content="https://arzakbersama.com/">
 <meta property="og:image" content="https://arzakbersama.com/og.jpg">
 <meta property="og:image:width" content="1200">
@@ -71,7 +71,7 @@ html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-t
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 body {
   margin: 0; background: var(--paper); color: var(--ink);
-  font-family: var(--sans); font-size: 1.0625rem; line-height: 1.65;
+  font-family: var(--sans); font-size: clamp(1.0625rem, .98rem + .3vw, 1.1875rem); line-height: 1.65;
   -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
 }
 h1, h2, h3, p, figure, ol, ul, dl, dd { margin: 0; }
@@ -86,34 +86,36 @@ h2, h3, .lead h1 { text-wrap: balance; }
 .skip { position: absolute; left: -999px; top: 0; z-index: 30; background: var(--burg); color: var(--on); padding: .6rem 1rem; font-weight: 600; }
 .skip:focus { left: var(--gutter); top: .75rem; }
 
-/* ===== Nameplate ===== */
-.plate-name { padding-top: clamp(1.25rem, 3vw, 2rem); }
-.edition {
-  display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
-  font-size: .875rem; color: var(--muted);
-  padding-bottom: .75rem; border-bottom: 1px solid var(--rule-strong);
-}
+/* ===== Pembuka: papan nama, kalimat utama, dan maket ===== */
 .nameplate {
   font-family: var(--sans); font-weight: 800;
   font-size: clamp(5.5rem, 25.5vw, 23rem);
-  line-height: .8; letter-spacing: -.01em; color: var(--burg);
-  margin: clamp(.75rem, 2vw, 1.5rem) 0 clamp(.5rem, 1.6vw, 1.25rem) -.05em;
-  white-space: nowrap;
+  line-height: .8; letter-spacing: -.01em; color: var(--on);
+  margin: 0 0 0 -.05em; white-space: nowrap;
 }
-.origin {
-  display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1rem, 3vw, 2.5rem);
-  border-top: 1px solid var(--rule-strong); padding-top: .9rem;
-}
-.origin p { font-size: 1rem; line-height: 1.45; }
-.origin p + p { color: var(--muted); text-align: right; }
+.hero-id { background: var(--wine); color: var(--on); padding-block: clamp(1.5rem, 4vw, 3rem) clamp(2rem, 5vw, 3.5rem); }
+.hero-copy { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(1.25rem, 4vw, 4rem); align-items: end; margin-top: clamp(1.5rem, 4vw, 3rem); }
+.hero-copy h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(2.25rem, 4.3vw, 4.1rem); line-height: 1; letter-spacing: -.012em; text-wrap: balance; max-width: 15em; }
+.hero-what { font-size: 1.0625rem; font-weight: 600; margin-bottom: .9rem; max-width: 30rem; }
+.hero-status { font-size: 1rem; line-height: 1.5; color: var(--on-muted); max-width: 21rem; justify-self: end; text-align: right; }
+@media (max-width: 56rem) { .hero-status { text-align: left; } }
+.hero-status .hint { display: none; }
+.veil { display: none; }
+@media (max-width: 56rem) { .hero-copy { grid-template-columns: 1fr; } .hero-status { justify-self: start; } }
 
 /* ===== Sticky nav ===== */
 .bar {
   position: sticky; top: 0; z-index: 20;
   background: var(--paper);
   border-bottom: 1px solid var(--rule);
-  margin-top: clamp(1.5rem, 4vw, 2.5rem);
+  transition: background-color .35s ease, color .35s ease, border-color .35s ease;
 }
+.bar.night { background: var(--wine); color: var(--on); border-bottom-color: var(--rule-dark); }
+.bar.night nav a:hover, .bar.night nav a[aria-current] { border-bottom-color: var(--gold); color: var(--on); }
+.bar.night :focus-visible { outline-color: var(--gold); }
+.bar.night .mk { color: var(--on); }
+.bar .mk svg path { transition: stroke .35s ease; }
+.bar.night .mk svg [stroke="#6E1E2B"] { stroke: var(--on); }
 .bar .wrap { display: flex; align-items: center; gap: 1.25rem; min-height: 3.5rem; }
 .bar .mk { display: inline-flex; align-items: center; gap: .5rem; font-weight: 800; letter-spacing: .03em; text-decoration: none; color: var(--burg-ink); opacity: 0; visibility: hidden; transition: opacity .25s ease, visibility .25s; }
 .bar.stuck .mk { opacity: 1; visibility: visible; }
@@ -129,17 +131,15 @@ h2, h3, .lead h1 { text-wrap: balance; }
   .bar nav a { padding-block: .75rem; }
 }
 
-/* ===== Lead ===== */
-.lead {
+/* ===== Ringkasan status ===== */
+#ringkasan { scroll-margin-top: calc(var(--bar-h, 3.5rem) - 4.5rem); }
+.status {
   display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-  gap: clamp(1.75rem, 5vw, 5rem); align-items: end;
-  padding-block: clamp(3rem, 7vw, 5.5rem) clamp(2.5rem, 5vw, 4rem);
+  gap: clamp(1.5rem, 5vw, 5rem); align-items: start;
+  padding-block: clamp(3.5rem, 8vw, 6.5rem);
 }
-@media (max-width: 56rem) { .lead { grid-template-columns: 1fr; } }
-.lead h1 {
-  font-family: var(--serif); font-weight: 400;
-  font-size: clamp(2.75rem, 6.6vw, 6.25rem); line-height: .98; letter-spacing: -.012em;
-}
+@media (max-width: 56rem) { .status { grid-template-columns: 1fr; } }
+.status-big { font-family: var(--serif); font-size: clamp(2rem, 4.2vw, 3.75rem); line-height: 1.04; letter-spacing: -.01em; text-wrap: balance; }
 .dek p { font-size: clamp(1.0625rem, 1.4vw, 1.1875rem); line-height: 1.65; max-width: 32rem; }
 .dek p + p { margin-top: 1rem; color: var(--muted); }
 
@@ -159,7 +159,7 @@ h2, h3, .lead h1 { text-wrap: balance; }
 .peta-steps .k { font-size: .875rem; font-weight: 700; color: var(--burg); font-variant-numeric: tabular-nums; }
 .peta-steps h3 { font-size: 1.1875rem; font-weight: 750; letter-spacing: -.01em; line-height: 1.25; margin-top: .3rem; }
 .peta-steps .intro h3 { font-family: var(--serif); font-weight: 400; font-size: clamp(1.5rem, 2.6vw, 2.1rem); letter-spacing: 0; line-height: 1.1; }
-.peta-steps p { margin-top: .4rem; color: var(--muted); font-size: .9875rem; line-height: 1.55; }
+.peta-steps p { margin-top: .4rem; color: var(--muted); font-size: 1.0625rem; line-height: 1.55; }
 .peta-steps .only-live { display: none; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 .peta-steps .visit { margin-top: .6rem; }
@@ -176,23 +176,63 @@ h2, h3, .lead h1 { text-wrap: balance; }
 @media (max-width: 34rem) { .peta-steps { grid-template-columns: 1fr; } }
 
 .peta-live .peta { margin-bottom: 0; }
-.peta-live .peta-track { position: relative; height: 420vh; height: calc(100svh + 4 * 80svh); }
-@media (max-width: 40rem) { .peta-live .peta-track { height: 360vh; height: calc(100svh + 4 * 65svh); } }
+.peta-live .peta-track { position: relative; height: 510vh; height: calc(100svh + 4 * 80svh + 80svh); }
+@media (max-width: 40rem) { .peta-live .peta-track { height: 450vh; height: calc(100svh + 4 * 65svh + 65svh); } }
 .peta-live .peta-pin {
   position: sticky; top: var(--bar-h, 3.5rem); height: calc(100vh - var(--bar-h, 3.5rem)); height: calc(100svh - var(--bar-h, 3.5rem)); overflow: hidden;
   background: radial-gradient(110% 85% at 62% 38%, #FCF8F3 0%, var(--paper) 46%, var(--paper-2) 100%);
-  border-block: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
 }
-.peta-live .peta-pin::before { content: ""; position: absolute; z-index: 2; inset: 0 0 auto 0; height: 7.5rem; pointer-events: none; background: linear-gradient(180deg, rgba(247, 241, 234, .92) 0%, rgba(247, 241, 234, .7) 45%, rgba(247, 241, 234, 0) 100%); }
-.peta-live .peta-top { position: absolute; z-index: 3; top: 1.1rem; left: 0; right: 0; pointer-events: none; }
+.peta-live .peta-pin::before, .peta-live .peta-pin::after { content: ""; position: absolute; z-index: 3; inset: 0 0 auto 0; height: 7.5rem; pointer-events: none; }
+.peta-live .peta-pin::before { opacity: var(--ui, 0); transition: opacity .35s ease; background: linear-gradient(180deg, rgba(247, 241, 234, .92) 0%, rgba(247, 241, 234, .7) 45%, rgba(247, 241, 234, 0) 100%); }
+.peta-live .peta-pin.night::before { opacity: 0; }
+.peta-live .peta-pin.night::after { opacity: var(--ui, 0); }
+.peta-live .peta-pin::after { opacity: 0; transition: opacity .35s ease; background: linear-gradient(180deg, rgba(28, 6, 11, .92) 0%, rgba(28, 6, 11, .66) 50%, rgba(28, 6, 11, 0) 100%); }
+/* latar: senja/fajar di bawah, malam di atasnya; kecerahannya diatur dari peta.js */
+.peta-live .sky, .peta-live .dawn { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.peta-live .dawn { opacity: var(--dawn, 0); background: radial-gradient(90% 105% at 88% 40%, #F2B487 0%, #DC8A72 22%, #A9515E 52%, #5C2233 82%, #3A1220 100%); }
+.peta-live .sky { opacity: var(--night, 0); background: radial-gradient(75% 90% at 94% 30%, #7A2A36 0%, #4A1621 28%, var(--wine) 60%, #1C060B 100%); }
+/* pembuka: selubung warna anggur dengan huruf ARZAK sebagai lubang; peta terlihat di dalam hurufnya */
+.peta-live .hero-id { display: contents; }
+.peta-live .veil { display: block; position: absolute; z-index: 3; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.veil path { fill: var(--wine); }
+/* sebelum skrip mengukur posisi huruf: layar anggur polos, supaya tidak ada kilatan */
+.peta-live .peta-pin:not(.siap) { background: var(--wine); }
+.peta-live .peta-pin:not(.siap) .veil, .peta-live .peta-pin:not(.siap) .peta-stage { visibility: hidden; }
+.peta-live .hero-name { position: absolute; z-index: 3; left: 0; right: 0; top: clamp(.75rem, 2.2vh, 1.75rem); pointer-events: none; }
+.peta-live .nameplate { font-size: min(25.5vw, 44vh, 22.5rem); font-size: min(25.5vw, 44svh, 22.5rem); color: transparent; }
+.peta-live .hero-copy { position: absolute; z-index: 4; left: 0; right: 0; bottom: clamp(1.25rem, 4.5vh, 2.75rem); margin-top: 0; color: var(--on); opacity: var(--copy, 1); pointer-events: none; }
+.peta-live .hero-status .hint { display: block; margin-top: .6rem; color: var(--gold); font-weight: 600; }
+.hero-status .hint a { color: var(--on); pointer-events: auto; }
+.hero-copy :focus-visible { outline-color: var(--gold); }
+.peta-live .terbuka .hero-status .hint a { visibility: hidden; }
+@media (max-width: 56rem) {
+  /* layar sempit: papan nama dan kalimat utama berkumpul di atas, status di bawah */
+  .peta-live .hero-copy { top: calc(clamp(.75rem, 2.2vh, 1.75rem) + min(25.5vw, 44vh, 22.5rem) * .8 + clamp(1.25rem, 4vh, 2.25rem)); display: flex; flex-direction: column; align-items: stretch; justify-content: space-between; gap: 1rem; }
+  .peta-live .hero-copy h1 { font-size: clamp(2.5rem, 11.5vw, 4.75rem); }
+  .peta-live .hero-copy h1 + * { margin-top: 0; }
+  .peta-live .hero-status { align-self: stretch; max-width: none; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+  .peta-live .hero-status > p:first-child { max-width: 30rem; }
+}
+@media (max-width: 56rem) and (max-height: 30rem) { .peta-live .hero-copy h1 { font-size: 2rem; } .peta-live .hero-what { display: none; } }
+.peta-live .peta-top, .peta-live .peta-card { opacity: var(--ui, 0); }
+.peta-live .is-hero .peta-card, .peta-live .is-hero .peta-top { visibility: hidden; }
+.peta-head, .peta-head .meta, .peta-skip { transition: color .35s ease; }
+.peta-live .night .peta-head { color: var(--on); }
+.peta-live .night .peta-head .meta { color: var(--on); }
+.peta-live .night .peta-skip { color: var(--on); }
+.peta-live .night :focus-visible { outline-color: var(--gold); }
+.peta-live .night .peta-box :focus-visible { outline-color: var(--burg); }
+.waktu { display: none; }
+.peta-live .waktu { display: inline; font-weight: 600; }
+.peta-live .peta-top { position: absolute; z-index: 4; top: 1.1rem; left: 0; right: 0; pointer-events: none; }
 .peta-live .peta-head { border-bottom: 0; }
 .peta-live .peta-head a, .peta-live .peta-head h2 { pointer-events: auto; }
 .peta-live .peta-skip { display: inline; }
-.peta-live .peta-stage { position: absolute; inset: 0; margin: 0; max-width: none; padding: 0; }
-.peta-live .peta-stage img { position: absolute; inset: 0; width: 100%; height: 100%; aspect-ratio: auto; background: none; transition: opacity .7s ease; }
+.peta-live .peta-stage { position: absolute; z-index: 2; inset: 0; margin: 0; max-width: none; padding: 0; }
+.peta-live .peta-stage img { display: none; }
 .peta-live .peta-stage canvas { display: block; position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity .7s ease; }
 .peta-live .peta-stage.ready canvas { opacity: 1; }
-.peta-live .peta-stage.ready img { opacity: 0; }
 .peta-live .peta-labels { display: block; position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 .pl {
   position: absolute; left: 0; top: 0; white-space: nowrap; margin-top: -.55rem;
@@ -205,26 +245,33 @@ h2, h3, .lead h1 { text-wrap: balance; }
 .pl.on { opacity: 1; }
 .pl.link { text-decoration: none; cursor: pointer; }
 .pl.link.on { pointer-events: auto; }
+.night .pl { background: rgba(28, 6, 11, .78); color: var(--on); outline: 1px solid rgba(247, 239, 231, .34); outline-offset: -1px; }
+.night .pl::after { border-top-color: rgba(247, 239, 231, .5); }
+.night .pl.plan { background: rgba(28, 6, 11, .78); color: var(--on); outline: 1.5px dashed var(--gold); outline-offset: -1.5px; }
+.night .pl.plan::after { border-top-color: var(--gold); }
 .pl.link:hover { background: var(--burg); }
 .pl.plan.link:hover { background: var(--paper-2); }
-.peta-live .peta-card { position: absolute; z-index: 3; left: 0; right: 0; bottom: clamp(1rem, 4.5vh, 2.75rem); pointer-events: none; }
+.peta-live .peta-card { position: absolute; z-index: 4; left: 0; right: 0; bottom: clamp(1rem, 4.5vh, 2.75rem); pointer-events: none; }
 .peta-live .peta-box {
-  max-width: 25.5rem; pointer-events: auto;
+  max-width: 27rem; pointer-events: auto;
   background: rgba(250, 246, 240, .94); border: 1px solid var(--rule); border-top: 3px solid var(--burg);
   box-shadow: 0 18px 40px -22px rgba(42, 11, 18, .45); padding: 1.1rem 1.3rem 1.2rem;
 }
 @supports (backdrop-filter: blur(4px)) { .peta-live .peta-box { background: rgba(250, 246, 240, .86); backdrop-filter: blur(8px); } }
+.peta-live .night .peta-box { background: rgba(250, 246, 240, .97); border-color: transparent; border-top-color: var(--burg); }
 .peta-live .peta-ticks { display: flex; gap: .4rem; margin-bottom: .85rem; }
 .peta-live .peta-ticks i { flex: 1; height: 3px; background: var(--rule); transition: background .3s ease; }
 .peta-live .peta-ticks i.on { background: var(--burg); }
 .peta-live .peta-steps { display: block; position: relative; margin-top: 0; }
-.peta-live .peta-steps > li { position: absolute; left: 0; right: 0; bottom: 0; border-top: 0; padding: 0; opacity: 0; transform: translateY(8px); transition: opacity .4s ease, transform .4s ease; pointer-events: none; }
-.peta-live .peta-steps > li.on { position: relative; opacity: 1; transform: none; pointer-events: auto; }
+.peta-live .peta-steps > li { position: absolute; left: 0; right: 0; bottom: 0; border-top: 0; padding: 0; opacity: 0; visibility: hidden; transform: translateY(8px); transition: opacity .4s ease, transform .4s ease, visibility 0s .4s; pointer-events: none; }
+.peta-live .peta-steps > li.on { position: relative; opacity: 1; visibility: visible; transform: none; pointer-events: auto; transition: opacity .4s ease, transform .4s ease, visibility 0s; }
 .peta-live .peta-steps h3 { font-size: 1.375rem; }
 .peta-live .peta-steps .intro h3 { font-size: 1.75rem; }
 .peta-live .peta-steps p { color: var(--ink); opacity: .82; }
 .peta-live .peta-steps .only-live { display: inline; }
 .peta-live .aslinya figcaption { color: var(--ink); opacity: .78; }
+@media (max-height: 44rem) { .peta-live .aslinya { display: none; } }
+@media (max-height: 30rem) { .peta-live .peta-steps p:not(.k):not(.visit) { display: none; } .peta-live .peta-box { padding-block: .6rem .7rem; } .peta-live .peta-ticks { margin-bottom: .5rem; } }
 @media (max-width: 56rem) {
   .peta-live .peta-box { max-width: none; padding: .9rem 1rem 1rem; }
   .peta-live .peta-steps h3 { font-size: 1.1875rem; }
@@ -259,29 +306,25 @@ h2, h3, .lead h1 { text-wrap: balance; }
 .parts li { display: grid; grid-template-columns: 2.25rem 1fr; gap: .9rem; padding-block: 1.1rem; border-top: 1px solid var(--rule-dark); }
 .parts li:last-child { border-bottom: 1px solid var(--rule-dark); }
 .parts .n { width: 2rem; height: 2rem; border: 1.5px solid var(--gold); border-radius: 50%; display: grid; place-items: center; color: var(--gold); font-weight: 700; font-size: .9375rem; font-variant-numeric: tabular-nums; }
-.parts b { display: block; font-size: 1.0625rem; }
-.parts p { color: var(--on-muted); font-size: .9875rem; line-height: 1.55; margin-top: .2rem; }
+.parts b { display: block; font-size: 1.1875rem; }
+.parts p { color: var(--on-muted); font-size: 1.0625rem; line-height: 1.55; margin-top: .2rem; }
 
-/* ===== Register (peran) ===== */
+/* ===== Peran: yang dikerjakan dan yang tidak ===== */
 .section { padding-block: clamp(4rem, 9vw, 7rem); }
 .kicker { font-size: .9375rem; font-weight: 600; color: var(--burg); margin-bottom: .75rem; }
 .sec-head h2 { font-size: clamp(2rem, 4.2vw, 3.4rem); font-weight: 750; line-height: 1.05; letter-spacing: -.03em; max-width: 18ch; }
-.sec-head p.intro { margin-top: 1rem; color: var(--muted); max-width: 40rem; }
-.reg-grid { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); gap: clamp(2rem, 5vw, 5rem); margin-top: clamp(2.25rem, 5vw, 3.5rem); align-items: start; }
-@media (max-width: 56rem) { .reg-grid { grid-template-columns: 1fr; } }
-.register { counter-reset: r; border-top: 2px solid var(--ink); }
-.register li {
-  counter-increment: r;
-  display: grid; grid-template-columns: 3rem 1fr; gap: .5rem;
-  padding-block: 1rem 1.05rem; border-bottom: 1px solid var(--rule);
-  font-size: clamp(1.0625rem, 1.6vw, 1.25rem); line-height: 1.45;
-}
-.register li::before { content: counter(r, decimal-leading-zero); font-weight: 700; color: var(--burg); font-variant-numeric: tabular-nums; font-size: .9375rem; padding-top: .2rem; }
-.not { border-top: 2px solid var(--burg); padding-top: 1rem; }
-.not h3 { font-size: 1.0625rem; font-weight: 700; color: var(--burg-ink); }
-.not ul { margin-top: .75rem; }
-.not li { padding-block: .6rem; border-bottom: 1px solid var(--rule); color: var(--ink); }
-.not li b { color: var(--burg); }
+.sec-head p.intro { margin-top: 1rem; color: var(--muted); max-width: 42rem; }
+.duo { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); margin-top: clamp(2.25rem, 5vw, 3.5rem); align-items: stretch; }
+.duo h3 { font-family: var(--serif); font-weight: 400; font-size: clamp(2rem, 3.6vw, 3.25rem); line-height: 1; letter-spacing: -.01em; }
+.duo ul { margin-top: clamp(1.25rem, 2.5vw, 2rem); }
+.duo li { padding-block: 1rem 1.05rem; font-size: clamp(1.125rem, 1.5vw, 1.3125rem); line-height: 1.42; }
+.duo-ya { padding: clamp(1.75rem, 3.5vw, 3rem) clamp(1.5rem, 4vw, 3.5rem) clamp(1.75rem, 3.5vw, 3rem) 0; border-top: 2px solid var(--ink); }
+.duo-ya li { border-top: 1px solid var(--rule); }
+.duo-tidak { background: var(--burg); color: var(--on); padding: clamp(1.75rem, 3.5vw, 3rem) clamp(1.25rem, 3vw, 2.75rem); border-top: 2px solid var(--burg); }
+.duo-tidak li { border-top: 1px solid rgba(247, 239, 231, .28); }
+.duo-tidak li b { color: #F0CD82; font-weight: 700; }
+.duo-tidak :focus-visible { outline-color: var(--gold); }
+@media (max-width: 56rem) { .duo { grid-template-columns: 1fr; } .duo-ya { padding-right: 0; } .duo-tidak { margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); } }
 
 /* ===== Essay (usaha pertama) ===== */
 .section.essay { padding-top: 0; }
@@ -301,29 +344,38 @@ h2, h3, .lead h1 { text-wrap: balance; }
 .fields p { font-size: clamp(1.0625rem, 1.5vw, 1.1875rem); line-height: 1.6; }
 .go { font-weight: 700; color: var(--burg-ink); }
 
-/* ===== Principle ===== */
-.principle { background: var(--paper-2); }
+/* ===== Prinsip: satu layar burgundy ===== */
+.principle { background: var(--burg); color: var(--on); min-height: min(100vh, 58rem); min-height: min(100svh, 58rem); display: grid; align-content: center; }
+.principle :focus-visible { outline-color: var(--gold); }
 .big {
   font-family: var(--serif); font-weight: 400;
-  font-size: clamp(2.75rem, 7vw, 6.5rem); line-height: 1; letter-spacing: -.01em; color: var(--burg-ink);
-  max-width: 16ch;
+  font-size: clamp(3.25rem, 10vw, 9.5rem); line-height: .94; letter-spacing: -.015em; color: var(--on);
+  max-width: 11ch;
 }
-.big-note { margin-top: 1.25rem; font-size: 1.125rem; max-width: 36rem; }
-.two { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.5rem, 5vw, 5rem); margin-top: clamp(2.5rem, 5vw, 4rem); border-top: 1px solid var(--rule-strong); padding-top: 1.5rem; }
+.big-note { margin-top: clamp(1.25rem, 2.5vw, 2rem); font-size: clamp(1.125rem, 1.6vw, 1.4375rem); line-height: 1.5; max-width: 38rem; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.5rem, 5vw, 5rem); margin-top: clamp(2.5rem, 6vw, 4.5rem); border-top: 1px solid rgba(247, 239, 231, .34); padding-top: 1.5rem; }
 @media (max-width: 44rem) { .two { grid-template-columns: 1fr; } }
-.two h3 { font-size: 1.25rem; font-weight: 750; letter-spacing: -.01em; }
-.two p { margin-top: .5rem; color: var(--muted); }
+.two h3 { font-size: 1.3125rem; font-weight: 750; letter-spacing: -.01em; }
+.two p { margin-top: .5rem; color: #EBD8D2; }
 
-/* ===== Chronology ===== */
-.years { display: grid; grid-template-columns: 1fr 1fr 1.3fr; border-top: 2px solid var(--ink); margin-top: clamp(2rem, 4vw, 3rem); }
-.years > div { padding: 1.25rem 1.5rem 1.75rem 0; }
-.years > div + div { padding-left: 1.5rem; border-left: 1px solid var(--rule); }
-.years b { display: block; font-family: var(--serif); font-weight: 400; font-size: clamp(3rem, 6vw, 5.25rem); line-height: 1; color: var(--burg); }
-.years .later b { color: var(--muted); }
-.years p { margin-top: .6rem; max-width: 22rem; }
+/* ===== Kronologi: garis waktu. Padat = sudah terjadi, putus-putus emas = rencana (sama dengan peta) ===== */
+.line { display: grid; grid-template-columns: 1fr 1fr 1.3fr; margin-top: clamp(2.5rem, 5vw, 4rem); }
+.line li { position: relative; padding: 2.25rem 1.75rem 0 0; }
+.line li::before { content: ""; position: absolute; left: 0; top: -7px; width: 15px; height: 15px; border-radius: 50%; background: var(--burg); transform: scale(var(--dot, 1)); transition: transform .3s ease; }
+.line li::after { content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 3px; background: var(--burg); transform-origin: 0 50%; transform: scaleX(var(--f, 1)); }
+.line li.next::before { background: var(--paper); border: 2px dashed var(--gold-deep); }
+.line li.next::after { height: 0; background: none; border-top: 3px dashed var(--gold-deep); transform: none; opacity: var(--f, 1); left: 22px; }
+.line b { display: block; font-family: var(--serif); font-weight: 400; font-size: clamp(3rem, 6.4vw, 5.75rem); line-height: 1; color: var(--burg); }
+.line .next b { color: var(--gold-deep); }
+.line p { margin-top: .7rem; max-width: 23rem; }
 @media (max-width: 44rem) {
-  .years { grid-template-columns: 1fr; }
-  .years > div, .years > div + div { padding: 1.1rem 0 1.25rem; border-left: 0; border-bottom: 1px solid var(--rule); }
+  .line { grid-template-columns: 1fr; margin-left: 7px; }
+  .line li { padding: 0 0 2.25rem 2rem; }
+  .line li:last-child { padding-bottom: 0; }
+  .line li::before { left: -7px; top: .9rem; }
+  .line li::after { left: -1px; right: auto; top: .9rem; bottom: -.9rem; width: 3px; height: auto; transform-origin: 50% 0; transform: scaleY(var(--f, 1)); }
+  .line li.next::after { display: none; }
+  .line b { font-size: 3rem; }
 }
 
 /* ===== Colophon (footer) ===== */
@@ -344,16 +396,7 @@ h2, h3, .lead h1 { text-wrap: balance; }
 <body>
 <a class="skip" href="#isi">Lewati ke isi</a>
 
-<header class="wrap plate-name">
-  <div class="edition"><span>Profil perusahaan</span><span>Edisi pertama, November 2026</span></div>
-  <p class="nameplate">ARZAK</p>
-  <div class="origin">
-    <p>Perusahaan induk untuk layanan kesehatan dan usaha yang sejalan.</p>
-    <p>Surabaya, Jawa Timur</p>
-  </div>
-</header>
-
-<div class="bar">
+<div class="bar night">
   <div class="wrap">
     <a class="mk" href="#" aria-label="ARZAK, kembali ke atas"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" viewBox="0 0 128 112">
 <defs>
@@ -384,27 +427,35 @@ h2, h3, .lead h1 { text-wrap: balance; }
 </div>
 
 <main id="isi">
-  <section class="wrap lead" aria-labelledby="judul">
-    <h1 id="judul">Usaha yang dibangun pelan, dipegang lama, dan dirancang untuk diwariskan.</h1>
-    <div class="dek">
-      <p>ARZAK sedang didirikan sebagai PT Arzak Selalu Bersama (dalam persiapan pendirian). Kepemilikannya tertutup dan tidak dibuka untuk umum; data pengurus dan pemegang saham diberikan kepada bank dan notaris melalui korespondensi resmi.</p>
-      <p>Setelah aktanya terbit, saham usaha yang kelak didirikan atau diambil alih, gedung dan peralatan, merek, dan standar kerja akan berada di ARZAK.</p>
-    </div>
-  </section>
-
   <section class="peta" id="peta" aria-labelledby="peta-judul">
     <div class="peta-track">
-      <div class="peta-pin">
+      <div class="peta-pin is-hero">
+        <div class="dawn" aria-hidden="true"></div>
+        <div class="sky" aria-hidden="true"></div>
+        <svg class="veil" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M-60000 -60000H60000V60000H-60000ZM11 0 263 -745H469L721 0H552L502 -152H229L179 0ZM272 -287H459L345 -639H387ZM788 0V-745H1073Q1150 -745 1209.5 -718Q1269 -691 1303 -638Q1337 -585 1337 -507Q1337 -431 1302 -377.5Q1267 -324 1208 -297L1378 0H1204L1020 -329L1120 -270H943V0ZM943 -405H1074Q1107 -405 1131 -418Q1155 -431 1168.5 -454Q1182 -477 1182 -507Q1182 -538 1168.5 -561Q1155 -584 1131 -597Q1107 -610 1074 -610H943ZM1390 0V-125L1729 -610H1410V-745H1925V-620L1587 -135H1935V0ZM1947 0 2199 -745H2405L2657 0H2488L2438 -152H2165L2115 0ZM2208 -287H2395L2281 -639H2323ZM2724 0V-745H2879V-372L2836 -387L3134 -745H3328L3033 -389L3042 -499L3334 0H3153L2971 -315L2879 -204V0Z"/></svg>
+        <div class="hero-id">
+          <div class="wrap hero-name"><p class="nameplate">ARZAK</p></div>
+          <div class="wrap hero-copy">
+            <div>
+              <p class="hero-what">Perusahaan induk untuk layanan kesehatan dan usaha yang sejalan.</p>
+              <h1 id="judul">Usaha yang dibangun pelan, dipegang lama, dan dirancang untuk jangka panjang.</h1>
+            </div>
+            <div class="hero-status">
+              <p>PT Arzak Selalu Bersama, dalam persiapan pendirian. Surabaya, Jawa Timur.</p>
+              <p class="hint"><span aria-hidden="true">Gulir untuk masuk ke peta, atau </span><a href="#ringkasan">lewati peta</a></p>
+            </div>
+          </div>
+        </div>
         <div class="wrap peta-top">
           <div class="peta-head">
             <h2 id="peta-judul">Peta ARZAK</h2>
-            <p class="meta"><span class="fig">Gambar 1, maket</span><a class="peta-skip" href="#tanda">Lewati peta</a></p>
+            <p class="meta"><span class="waktu" aria-hidden="true">Pagi</span><a class="peta-skip" href="#ringkasan">Lewati peta</a></p>
           </div>
         </div>
         <div class="peta-stage">
           <picture>
             <source media="(max-width: 34rem)" srcset="/peta/peta-poster-hp.jpg" width="1260" height="1680">
-            <img src="/peta/peta-poster.jpg" width="2400" height="1200" alt="Maket peta: kota Surabaya dengan kantor ARZAK bergaris putus-putus, Jembatan Suramadu melintasi Selat Madura, Klinik Utama INTRO Dental di Bangkalan, dan petak terpisah berisi tiga rencana bergaris putus-putus." decoding="async">
+            <img src="/peta/peta-poster.jpg" width="2400" height="1200" loading="lazy" alt="Maket peta: kota Surabaya dengan kantor ARZAK bergaris putus-putus, Jembatan Suramadu melintasi Selat Madura, Klinik Utama INTRO Dental di Bangkalan, dan petak terpisah berisi tiga rencana bergaris putus-putus." decoding="async">
           </picture>
           <canvas aria-hidden="true"></canvas>
           <div class="peta-labels" aria-hidden="true"></div>
@@ -415,7 +466,7 @@ h2, h3, .lead h1 { text-wrap: balance; }
             <ol class="peta-steps">
               <li class="intro on" data-i="0">
                 <h3>Dari tempat kedudukan sampai bagian yang belum digambar.</h3>
-                <p><span class="only-live">Gulir untuk menyeberang. </span>Bangunan padat sudah berdiri; yang bergaris putus-putus emas masih rencana.<span class="only-live"> Klinik dan Nata Arah bisa diklik untuk membuka situsnya.</span></p>
+                <p><span class="only-live">Gulir untuk menyeberang; satu hari berlalu di sepanjang jalan. </span>Bangunan padat sudah berdiri; yang bergaris putus-putus emas masih rencana.<span class="only-live"> Klinik dan Nata Arah bisa diklik untuk membuka situsnya.</span></p>
                 <p class="legend"><span class="solid"><i></i>Sudah berdiri</span><span class="plan"><i></i>Rencana</span></p>
               </li>
               <li data-i="1">
@@ -451,9 +502,17 @@ h2, h3, .lead h1 { text-wrap: balance; }
     </div>
   </section>
 
+  <section class="wrap status" id="ringkasan" aria-label="Status pendirian">
+    <p class="status-big">ARZAK sedang didirikan sebagai PT Arzak Selalu Bersama (dalam persiapan pendirian).</p>
+    <div class="dek">
+      <p>Kepemilikannya tertutup dan tidak dibuka untuk umum; data pengurus dan pemegang saham diberikan kepada bank dan notaris melalui korespondensi resmi.</p>
+      <p>Setelah aktanya terbit, saham usaha yang kelak didirikan atau diambil alih, gedung dan peralatan, merek, dan standar kerja akan berada di ARZAK.</p>
+    </div>
+  </section>
+
   <section class="dark anat" id="tanda" aria-labelledby="anat-judul">
     <div class="wrap">
-      <div class="anat-head"><h2 id="anat-judul">Anatomi tanda ARZAK</h2><span>Gambar 2</span></div>
+      <div class="anat-head"><h2 id="anat-judul">Anatomi tanda ARZAK</h2></div>
       <p class="anat-lede">Modal tanpa tata kelola tidak membentuk apa pun.</p>
       <div class="anat-grid">
         <figure><svg viewBox="-34 -16 196 140" role="img" aria-label="Logo ARZAK dengan empat bagian bernomor: kaki kiri, kaki kanan, puncak, dan lengkung emas" xmlns="http://www.w3.org/2000/svg"><g class="mark-art">
@@ -487,22 +546,24 @@ h2, h3, .lead h1 { text-wrap: balance; }
 
   <section class="wrap section" id="peran" aria-labelledby="peran-judul">
     <div class="sec-head">
-      <p class="kicker">Peran</p>
-      <h2 id="peran-judul">Yang akan dikerjakan ARZAK setelah akta terbit</h2>
+      <h2 id="peran-judul">Peran ARZAK setelah akta terbit</h2>
       <p class="intro">PT Arzak Selalu Bersama masih dalam persiapan pendirian. Sampai aktanya terbit, setiap usaha dalam lingkup ARZAK berjalan di bawah badan usahanya sendiri.</p>
     </div>
-    <div class="reg-grid">
-      <ol class="register">
-        <li>Memegang saham perusahaan-perusahaan dalam grup.</li>
-        <li>Mendirikan usaha baru, atau membeli saham perusahaan yang sejalan setelah valuasi dan pemeriksaan menyeluruh.</li>
-        <li>Memiliki gedung dan peralatan, lalu menyewakannya kepada usaha yang memakainya.</li>
-        <li>Menjaga merek dan prosedur tertulis supaya bisa dibawa ke tempat baru.</li>
-        <li>Menetapkan standar mutu yang sama untuk setiap usaha, mulai dari cara menyambut pelanggan sampai cara mencatat keuangan.</li>
-        <li>Menyediakan layanan keuangan dan SDM bersama, dengan perjanjian tertulis untuk setiap usaha yang memakainya.</li>
-      </ol>
-      <aside class="not" aria-labelledby="not-judul">
-        <h3 id="not-judul">Yang tidak dilakukan ARZAK</h3>
-        <ul>
+    <div class="duo">
+      <div class="duo-ya">
+        <h3 id="ya-judul">Yang dikerjakan</h3>
+        <ul aria-labelledby="ya-judul">
+          <li>Memegang saham perusahaan-perusahaan dalam grup.</li>
+          <li>Mendirikan usaha baru, atau membeli saham perusahaan yang sejalan setelah valuasi dan pemeriksaan menyeluruh.</li>
+          <li>Memiliki gedung dan peralatan, lalu menyewakannya kepada usaha yang memakainya.</li>
+          <li>Menjaga merek dan prosedur tertulis supaya bisa dibawa ke tempat baru.</li>
+          <li>Menetapkan standar mutu yang sama untuk setiap usaha, mulai dari cara menyambut pelanggan sampai cara mencatat keuangan.</li>
+          <li>Menyediakan layanan keuangan dan SDM bersama, dengan perjanjian tertulis untuk setiap usaha yang memakainya.</li>
+        </ul>
+      </div>
+      <aside class="duo-tidak" aria-labelledby="not-judul">
+        <h3 id="not-judul">Yang tidak dilakukan</h3>
+        <ul aria-labelledby="not-judul">
           <li><b>Tidak</b> menjalankan layanan klinik sehari-hari.</li>
           <li><b>Tidak</b> memegang atau membaca data pasien.</li>
           <li><b>Tidak</b> menawarkan saham atau menghimpun dana dari masyarakat.</li>
@@ -540,7 +601,6 @@ h2, h3, .lead h1 { text-wrap: balance; }
 
   <section class="principle section" id="prinsip" aria-labelledby="prinsip-judul">
     <div class="wrap">
-      <p class="kicker">Prinsip</p>
       <h2 id="prinsip-judul" class="big">Pelan, supaya kepercayaan terjaga.</h2>
       <p class="big-note">Tempat baru dibuka setelah standar di tempat sebelumnya terbukti, dan harus minimal setara dengan yang pertama.</p>
       <div class="two">
@@ -551,12 +611,12 @@ h2, h3, .lead h1 { text-wrap: balance; }
   </section>
 
   <section class="wrap section" id="kronologi" aria-labelledby="kron-judul">
-    <div class="sec-head"><p class="kicker">Kronologi</p><h2 id="kron-judul">Sejauh ini</h2></div>
-    <div class="years">
-      <div><b>2024</b><p>Klinik Utama INTRO Dental dibuka di Bangkalan.</p></div>
-      <div><b>2026</b><p>Arah grup dan peran perusahaan induk dirumuskan.</p></div>
-      <div class="later"><b>Berikutnya</b><p>Pendirian PT Arzak Selalu Bersama, yang kini dalam persiapan pendirian, lalu usaha berikutnya ketika standarnya siap disalin.</p></div>
-    </div>
+    <div class="sec-head"><h2 id="kron-judul">Sejauh ini</h2></div>
+    <ol class="line">
+      <li><b>2024</b><p>Klinik Utama INTRO Dental dibuka di Bangkalan.</p></li>
+      <li><b>2026</b><p>Arah grup dan peran perusahaan induk dirumuskan.</p></li>
+      <li class="next"><b>Berikutnya</b><p>Pendirian PT Arzak Selalu Bersama, yang kini dalam persiapan pendirian, lalu usaha berikutnya ketika standarnya siap disalin.</p></li>
+    </ol>
   </section>
 </main>
 
@@ -600,15 +660,18 @@ h2, h3, .lead h1 { text-wrap: balance; }
 
 <script>
 (() => {
-  const bar = document.querySelector('.bar'), top = document.querySelector('.plate-name');
+  const bar = document.querySelector('.bar'), top = document.querySelector('.hero-id');
   if ('IntersectionObserver' in window && bar && top) {
-    new IntersectionObserver(([e]) => bar.classList.toggle('stuck', !e.isIntersecting)).observe(top);
+    /* versi diam (tanpa WebGL, gerak dikurangi, atau modul gagal dimuat): bilah berwarna anggur selama blok pembuka terlihat */
+    let diam = false;
+    const pakaiDiam = () => { if (diam) return; diam = true; new IntersectionObserver(([e]) => { bar.classList.toggle('night', e.isIntersecting); bar.classList.toggle('stuck', !e.isIntersecting); }, { rootMargin: '-56px 0px 0px 0px' }).observe(document.querySelector('.hero-copy')); };
+    if (!document.documentElement.classList.contains('peta-live')) pakaiDiam(); else document.addEventListener('peta-diam', pakaiDiam);
     const links = [...bar.querySelectorAll('nav a')];
     const map = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
     const spy = new IntersectionObserver((es) => {
       es.forEach(e => { if (e.isIntersecting) { links.forEach(a => a.removeAttribute('aria-current')); const a = map.get(e.target.id); if (a) a.setAttribute('aria-current', 'location'); } });
     }, { rootMargin: '-45% 0px -50% 0px' });
-    ['judul', 'peta', ...map.keys(), 'prinsip', 'kronologi'].forEach(id => { const el = document.getElementById(id); if (el) spy.observe(el); });
+    ['peta', 'ringkasan', ...map.keys(), 'prinsip', 'kronologi'].forEach(id => { const el = document.getElementById(id); if (el) spy.observe(el); });
   }
 })();
 (() => {
@@ -619,39 +682,82 @@ h2, h3, .lead h1 { text-wrap: balance; }
   io.observe(s);
 })();
 (() => {
+  /* Peta: pembuka (huruf ARZAK membuka) lalu empat langkah. h = kemajuan pembuka 0..1, s = langkah 0..4. */
   const root = document.documentElement, track = document.querySelector('.peta-track');
   if (!track || !root.classList.contains('peta-live')) return;
   const pin = track.querySelector('.peta-pin'), bar = document.querySelector('.bar');
   const steps = [...track.querySelectorAll('.peta-steps > li')], ticks = [...track.querySelectorAll('.peta-ticks i')];
-  const N = steps.length - 1;
-  let cur = -1, barH = 0, queued = false;
-  const measure = () => { barH = bar ? bar.offsetHeight : 0; root.style.setProperty('--bar-h', barH + 'px'); };
+  const veil = pin.querySelector('.veil'), vp = veil.querySelector('path'), np = pin.querySelector('.nameplate'), waktu = pin.querySelector('.waktu');
+  const WAKTU = ['Pagi', 'Siang', 'Senja', 'Malam', 'Fajar'];
+  const N = steps.length - 1, c01 = (v) => Math.min(1, Math.max(0, v));
+  /* titik zum: tengah garis miring huruf Z (satuan huruf, 1000 per em); FN = arah tegak lurus garis itu, FW = setengah tebalnya */
+  const FX = 1657.75, FY = -372.5, FN = [0.8196, 0.5729], FW = 77.869;
+  let cur = -1, barH = 0, queued = false, key = '', sc = 1, fx = 0, fy = 0, zmax = 40, HS = 1;
+  function measure() {
+    barH = bar ? bar.offsetHeight : 0; root.style.setProperty('--bar-h', barH + 'px');
+    const r = pin.getBoundingClientRect(), fs = parseFloat(getComputedStyle(np).fontSize), g = document.createRange();
+    g.selectNodeContents(np);
+    sc = fs / 1000; fx = g.getBoundingClientRect().left - r.left + FX * sc; fy = np.getBoundingClientRect().top - r.top + 0.808 * fs + FY * sc;
+    let m = 0;
+    for (const [x, y] of [[0, 0], [r.width, 0], [0, r.height], [r.width, r.height]]) m = Math.max(m, Math.abs((x - fx) * FN[0] + (y - fy) * FN[1]));
+    zmax = 1.08 * m / (FW * sc); HS = Math.round(pin.offsetHeight * (innerWidth <= 640 ? 0.68 : 0.82)); key = '';
+  }
   function update() {
     queued = false;
-    const span = Math.max(1, track.offsetHeight - pin.offsetHeight);
-    const p = Math.min(1, Math.max(0, (barH - track.getBoundingClientRect().top) / span));
-    const s = p * N, i = Math.round(s);
-    track.dataset.s = s.toFixed(4);
+    if (!root.classList.contains('peta-live')) return;
+    const tr = track.getBoundingClientRect(), y = barH - tr.top;
+    const span = Math.max(HS + 1, track.offsetHeight - pin.offsetHeight);
+    const h = c01(y / HS), s = c01((y - HS) / (span - HS)) * N, i = Math.round(s);
+    track.dataset.s = s.toFixed(4); track.dataset.h = h.toFixed(4);
+    const k2 = h.toFixed(4) + (s > 1.38) + (tr.bottom > barH + 24);
+    if (k2 !== key) {
+      key = k2;
+      if (h < 1) {
+        const t = c01((h - 0.05) / 0.93), z = Math.pow(zmax, 0.55 * t + 0.45 * t * t * (3 - 2 * t)), q = sc * z;
+        vp.setAttribute('transform', 'matrix(' + q + ' 0 0 ' + q + ' ' + (fx - FX * q) + ' ' + (fy - FY * q) + ')');
+      }
+      veil.style.display = h < 1 ? '' : 'none';
+      pin.style.setProperty('--copy', (1 - c01((h - 0.03) / 0.2)).toFixed(3));
+      pin.style.setProperty('--ui', c01((h - 0.84) / 0.16).toFixed(3));
+      pin.classList.toggle('is-hero', h < 0.84); pin.classList.toggle('terbuka', h >= 0.23);
+      if (bar) { bar.classList.toggle('night', h < 0.8 || (s > 1.38 && tr.bottom > barH + 24)); bar.classList.toggle('stuck', h >= 0.5); }
+    }
     if (i !== cur) {
       cur = i; track.dataset.i = i;
       steps.forEach((li, k) => li.classList.toggle('on', k === i));
       ticks.forEach((t, k) => t.classList.toggle('on', k < i));
+      if (waktu) waktu.textContent = WAKTU[i];
     }
   }
   const q = () => { if (!queued) { queued = true; requestAnimationFrame(update); } };
-  measure(); update();
+  measure(); update(); pin.classList.add('siap');
   addEventListener('scroll', q, { passive: true });
   addEventListener('resize', () => { measure(); q(); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { measure(); q(); });
+})();
+(() => {
+  /* Garis waktu terisi saat bagian itu digulir. Tanpa skrip atau dengan gerak dikurangi, garisnya langsung penuh. */
+  const ol = document.querySelector('.line');
+  if (!ol || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const li = [...ol.children]; let queued = false, last = -1;
+  function update() {
+    queued = false;
+    const r = ol.getBoundingClientRect(), vh = innerHeight;
+    const p = Math.min(1, Math.max(0, (vh * 0.88 - r.top) / (vh * 0.5)));
+    if (p === last) return; last = p;
+    li.forEach((el, k) => { const f = Math.min(1, Math.max(0, p * 3 - k)); el.style.setProperty('--f', f.toFixed(3)); el.style.setProperty('--dot', p * 3 > k - 0.05 ? 1 : 0); });
+  }
+  const q = () => { if (!queued) { queued = true; requestAnimationFrame(update); } };
+  update(); addEventListener('scroll', q, { passive: true }); addEventListener('resize', q);
 })();
 </script>
 <script>
-/* Modul 3D baru diunduh saat peta mendekati layar. Bila gagal, kembali ke gambar diam tanpa membuat halaman melompat. */
+/* Peta 3D adalah pembuka halaman, jadi modulnya langsung dimuat. Bila gagal, kembali ke gambar diam tanpa membuat halaman melompat. */
 (() => {
   const root = document.documentElement, track = document.querySelector('.peta-track');
   if (!track || !root.classList.contains('peta-live')) return;
-  const fail = () => { const y0 = track.getBoundingClientRect().top; root.classList.remove('peta-live'); if (y0 < 0) scrollBy(0, track.getBoundingClientRect().top - y0); };
-  const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { io.disconnect(); import('/peta/peta.js?v=3').catch(fail); } }, { rootMargin: '100% 0px' });
-  io.observe(track);
+  const fail = () => { const y0 = track.getBoundingClientRect().top; root.classList.remove('peta-live'); if (y0 < 0) scrollBy(0, track.getBoundingClientRect().top - y0); document.dispatchEvent(new Event('peta-diam')); };
+  import('/peta/peta.js?v=5').catch(fail);
 })();
 </script>
 </body>

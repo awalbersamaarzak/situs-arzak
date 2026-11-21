@@ -19,6 +19,7 @@
 7. **Foto.** Jangan pakai foto orang yang wajahnya bisa dikenali, dan jangan memakai foto pasien atau staf. Setiap foto baru dicantumkan sumber dan lisensinya di footer, lalu ditambahkan ke `.github/workflows/foto.yml` supaya diunduh, dikecilkan, dan dibersihkan metadatanya.
 8. **Pemeriksa kedua untuk desain.** Perubahan tampilan besar dinilai juri independen dengan rubrik `claude/RUBRIK_JURI_DESAIN_WEB.md` di project ARZAK OS (Content, Design, Usability, Creativity, Accessibility, Kepatuhan); lulus = rata-rata ≥ 8 dan tidak ada kriteria < 7.
 9. **Bahasa.** Jelaskan rencana, temuan, dan hasil kepada Owner dalam Bahasa Indonesia. Kode, nama variabel, dan pesan commit boleh dalam bahasa Inggris.
+10. **Kalimat utama.** Keputusan Owner 21 Nov 2026: kalimat utama berbunyi "Usaha yang dibangun pelan, dipegang lama, dan dirancang untuk jangka panjang." Jangan memakai kata "diwariskan" atau "warisan" untuk menggambarkan ARZAK di halaman, metadata, maupun gambar pratinjau.
 
 ## B. Karpathy-Inspired Guidelines
 <!-- Sumber: github.com/multica-ai/andrej-karpathy-skills, commit 2c60614, lisensi MIT. Jangan diubah; perbarui hanya dari sumber. -->

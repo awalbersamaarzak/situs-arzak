@@ -23,9 +23,15 @@ Situs profil ARZAK — perusahaan induk. Satu halaman statis, tanpa build, ditay
 2. Buka file itu di browser untuk memeriksa tampilan, termasuk lebar HP.
 3. Commit ke `main`. GitHub Pages menayangkan ulang dalam 1–2 menit.
 
+## Pembuka
+
+Layar pertama adalah selubung warna anggur dengan huruf ARZAK sebagai lubang (elemen `svg.veil` di `index.html`); peta terlihat di dalam hurufnya. Saat digulir, hurufnya membesar dari garis miring huruf Z sampai seluruh peta terbuka. Garis luar hurufnya diambil dari Plus Jakarta Sans 800, jadi tidak bergantung pada pemuatan huruf. Tanpa WebGL, dengan gerak dikurangi, atau bila `peta.js` gagal dimuat, pembuka menjadi blok anggur biasa dan peta menjadi gambar diam.
+
 ## Mengubah peta 3D
 
 1. Edit `peta/src/peta.js`. Bangunan padat = sudah berdiri; garis putus-putus emas = rencana.
+   - Cahaya mengikuti gulir: pagi (pembuka), siang (Surabaya), senja (jembatan), malam (Bangkalan), fajar (rencana). Atur di daftar `LK`.
+   - Bingkai kamera pembuka ada di `KH`; bingkai tiap langkah di `K`.
 2. Bundel ulang (butuh Node): `npm i three@0.160.0 esbuild@0.21.5` lalu `npx esbuild peta/src/peta.js --bundle --format=esm --minify --legal-comments=eof --target=es2020 --outfile=peta/peta.js`.
 3. Naikkan angka `?v=` pada `import('/peta/peta.js?v=…')` di `index.html` supaya browser tidak memakai versi lama.
 4. Bila tampilan ringkasnya berubah, buat ulang `peta-poster.jpg`: jalankan server lokal di akar repo, buka `/peta/src/poster.html?poster`, lalu ambil tangkapan layar elemen `.peta-stage` pada skala 2× (hasil 2400×1200).
