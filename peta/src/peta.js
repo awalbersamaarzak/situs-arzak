@@ -10,7 +10,8 @@ import {
 
 const stage = document.querySelector('.peta-stage');
 const track = document.querySelector('.peta-track');
-const POSTER = new URLSearchParams(location.search).has('poster');
+const QS = new URLSearchParams(location.search);
+const POSTER = QS.has('poster'), WAKTU = parseFloat(QS.get('waktu') || '0');
 if (stage && track) start();
 
 function start() {
@@ -21,6 +22,7 @@ function start() {
   } catch (e) { // tanpa WebGL: kembali ke gambar diam, posisi baca dijaga
     const y0 = track.getBoundingClientRect().top; document.documentElement.classList.remove('peta-live');
     if (y0 < 0) window.scrollBy(0, track.getBoundingClientRect().top - y0);
+    document.dispatchEvent(new Event('peta-diam'));
     return;
   }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, matchMedia('(pointer: coarse)').matches ? 1.5 : 2));
@@ -70,6 +72,20 @@ function start() {
   const bx = (x, y, z, w, h, d, c, e = true) => B.push({ x, y, z, w, h, d, c, e });
   const G = 0.5; // tinggi permukaan daratan
   const R = []; // atap limas (instanced)
+  // jendela: kaca gelap tipis saat siang, menyala mulai senja
+  const WN = [], rw = mulberry32(977);
+  const win = (x, y0, z, w, h, d, p, sy = 0.17) => {
+    const ys = [];
+    if (h < 0.9) { if (h > 0.42) ys.push(h * 0.55); } else for (let y = 0.24; y < h - 0.16; y += 0.42) ys.push(y);
+    for (const [len, face] of [[w, 0], [d, 1]]) {
+      const cols = Math.max(1, Math.floor((len - 0.12) / 0.21)), sp = (len - 0.12) / cols;
+      for (const y of ys) for (let c = 0; c < cols; c++) {
+        if (rw() > p) continue;
+        const o = -len / 2 + 0.06 + sp * (c + 0.5);
+        WN.push(face ? { x: x + w / 2 + 0.009, y: y0 + y, z: z - o, ry: Math.PI / 2, sx: sp * 0.56, sy, bx: x } : { x: x + o, y: y0 + y, z: z + d / 2 + 0.009, ry: 0, sx: sp * 0.56, sy, bx: x });
+      }
+    }
+  };
   const roof = (x, y, z, w, h, d) => R.push({ x, y, z, w, h, d });
 
   // Surabaya: siluet kota generik (tidak ada rumah pribadi yang dimodelkan)
@@ -89,6 +105,7 @@ function start() {
       const pal = h > 2.6 ? [C.ivory, C.ivory, C.stone] : [C.ivory, C.sand, C.stone, C.ivory];
       const c = pal[Math.floor(rnd() * pal.length)];
       bx(gx, G, gz, w, h, d, c);
+      win(gx, G, gz, w, h, d, h > 2.4 ? 0.5 : 0.34);
       if (h > 2.4) { // lantai menara
         for (let y = 0.45; y < h - 0.2; y += 0.42) bx(gx, G + y, gz, w + 0.03, 0.05, d + 0.03, C.stone, false);
         bx(gx, G + h, gz, w * 0.45, 0.22, d * 0.45, C.sand);
@@ -106,6 +123,7 @@ function start() {
     const w = 0.62 + rnd() * 0.3, d = 0.58 + rnd() * 0.3, h = 0.36 + rnd() * 0.3;
     bx(x, G, z, w, h, d, rnd() < 0.5 ? C.ivory : C.sand);
     roof(x, G + h, z, w, 0.32, d);
+    win(x, G, z, w, h, d, 0.5, 0.11);
   }
   for (const [x, z, w, d, c] of [[16.5, -10.5, 3.2, 2.2, C.field], [19.6, -9.8, 2.2, 3, C.field2], [15.6, -0.6, 3.4, 2.4, C.field2], [18.8, 2.6, 2.6, 2.4, C.field], [13.4, 4.6, 3, 2, C.field], [9, 7.4, 2.6, 2.2, C.field2], [17, 8.6, 3.4, 2.6, C.field2]]) {
     bx(x, G, z, w, 0.05, d, c, false);
@@ -123,6 +141,7 @@ function start() {
 
   // Klinik Utama INTRO Dental (padat, sudah berdiri)
   bx(CL.x, G, CL.z, 2.4, 2.15, 1.7, C.clinic);
+  for (const y of [0.06, 0.76, 1.46]) win(CL.x, G + y, CL.z, 2.4, 0.8, 1.7, 0.8, 0.22);
   for (const y of [0.68, 1.38]) bx(CL.x, G + y, CL.z, 2.44, 0.1, 1.74, C.ivory, false);
   bx(CL.x, G + 2.15, CL.z, 2.52, 0.12, 1.82, C.ivory);
   bx(CL.x, G + 0.52, CL.z + 1.02, 0.9, 0.07, 0.42, C.ivory, false);
@@ -181,12 +200,20 @@ function start() {
   const cg = new BufferGeometry(); cg.setAttribute('position', new Float32BufferAttribute(cab, 3));
   bridge.add(new LineSegments(cg, new LineBasicMaterial({ color: 0xFFF8EE, transparent: true, opacity: 0.85 })));
 
+  const lampMat = new MeshBasicMaterial({ color: 0xFFD08A, transparent: true, opacity: 0, depthWrite: false });
+  const LP = []; for (let x = RP * 0.5; x <= LB - RP * 0.5; x += 0.62) for (const sd of [-1, 1]) LP.push([x, deckY(x) + 0.13, sd * 0.36]);
+  const lamps = new InstancedMesh(unit, lampMat, LP.length);
+  { const m = new Matrix4(); LP.forEach(([x, y, z], i) => lamps.setMatrixAt(i, m.makeScale(0.07, 0.07, 0.07).setPosition(x, y, z))); }
+  bridge.add(lamps);
+
   // mobil kecil di jembatan
   const cars = [];
   const carCols = [C.ivory, C.stone, C.ink2, C.sand, C.ivory, C.clinic];
+  const headMat = new MeshBasicMaterial({ color: 0xFFE9BD, transparent: true, opacity: 0, depthWrite: false });
   for (let k = 0; k < 12; k++) {
     const m = new Mesh(unit, M(carCols[k % carCols.length]));
     m.scale.set(0.32, 0.15, 0.17); bridge.add(m);
+    const hl = new Mesh(unit, headMat); hl.scale.set(0.16, 0.5, 0.86); hl.position.set(k % 2 ? 0.5 : -0.5, -0.05, 0); m.add(hl);
     cars.push({ m, u: rnd(), v: (0.022 + rnd() * 0.012) * (k % 2 ? 1 : -1), lane: k % 2 ? -0.17 : 0.17 });
   }
   // perahu nelayan di selat
@@ -210,13 +237,16 @@ function start() {
   };
   const dash = [];
   const ghost = new MeshBasicMaterial({ color: C.gold, transparent: true, opacity: 0.07, depthWrite: false });
-  for (const p of Object.values(PLANS)) {
+  const fillMat = new MeshBasicMaterial({ color: 0xE3BC62, transparent: true, opacity: 0.18, depthWrite: false });
+  const FILL = [];
+  for (const [key, p] of Object.entries(PLANS)) {
     dashBox(p.x, G, p.z, p.w, p.h, p.d);
     const gm = new Mesh(unit, ghost); gm.scale.set(p.w, p.h, p.d); gm.position.set(p.x, G + p.h / 2, p.z); scene.add(gm);
+    if (key !== 'arzak') { const fm = new Mesh(unit, fillMat); fm.visible = false; scene.add(fm); FILL.push({ m: fm, p }); }
     const f = new Mesh(unit, new MeshBasicMaterial({ color: C.gold, transparent: true, opacity: 0.22, depthWrite: false }));
     f.scale.set(p.w, 0.01, p.d); f.position.set(p.x, G + 0.012, p.z); scene.add(f);
   }
-  const dashMat = new MeshBasicMaterial({ color: 0xA27C2C });
+  const dashMat = new MeshBasicMaterial({ color: 0xA27C2C, transparent: true });
   const dashMesh = new InstancedMesh(unit, dashMat, dash.length);
   dash.forEach((m, i) => dashMesh.setMatrixAt(i, m)); scene.add(dashMesh);
 
@@ -265,7 +295,35 @@ function start() {
   treeMesh.castShadow = true; scene.add(treeMesh);
 
   const eg = new BufferGeometry(); eg.setAttribute('position', new Float32BufferAttribute(edges, 3));
-  scene.add(new LineSegments(eg, new LineBasicMaterial({ color: C.ink, transparent: true, opacity: 0.26 })));
+  const edgeMat = new LineBasicMaterial({ color: C.ink, transparent: true, opacity: 0.26 });
+  scene.add(new LineSegments(eg, edgeMat));
+
+  const winMat = new MeshBasicMaterial({ color: 0xFFC872, transparent: true, opacity: 1, depthWrite: false });
+  const wins = new InstancedMesh(new PlaneGeometry(1, 1), winMat, WN.length);
+  { const sc = new Vector3(); WN.forEach((w, i) => wins.setMatrixAt(i, m4.makeRotationY(w.ry).scale(sc.set(w.sx, w.sy, 1)).setPosition(w.x, w.y, w.z))); }
+  scene.add(wins);
+
+  // langkah terakhir: isi emas naik satu per satu di dalam garis rencana (tetap tembus pandang: masih rencana)
+  let fillS = -1;
+  function applyFill(s) {
+    if (Math.abs(s - fillS) < 0.002) return; fillS = s;
+    FILL.forEach(({ m, p }, i) => {
+      const k = smooth(clamp((s - 3.3 - i * 0.13) / 0.36));
+      m.visible = k > 0.002;
+      if (m.visible) { m.scale.set(p.w - 0.07, (p.h - 0.04) * k, p.d - 0.07); m.position.set(p.x, G + 0.02 + ((p.h - 0.04) * k) / 2, p.z); }
+    });
+  }
+
+  // pembuka: bangunan tumbuh dari barat ke timur, sekali saja saat halaman dibuka
+  const growK = (x, g) => { const t = clamp(g * 1.75 - ((x + 22) / 58) * 0.75); return 1 - Math.pow(1 - t, 3); };
+  function applyGrow(g) {
+    B.forEach((b, i) => { const k = Math.max(1e-4, growK(b.x, g)); boxes.setMatrixAt(i, m4.makeScale(b.w, b.h * k, b.d).setPosition(b.x, G + (b.y - G) * k + (b.h * k) / 2, b.z)); });
+    boxes.instanceMatrix.needsUpdate = true;
+    R.forEach((r, i) => { const k = Math.max(1e-4, growK(r.x, g)); roofs.setMatrixAt(i, m4.makeScale(r.w + 0.08, r.h * k, r.d + 0.08).setPosition(r.x, G + (r.y - G) * k, r.z)); });
+    roofs.instanceMatrix.needsUpdate = true;
+    trees.forEach(([x, z, r], i) => { const k = Math.max(1e-4, growK(x, g)); treeMesh.setMatrixAt(i, m4.makeScale(r * 2 * k, r * 2 * k, r * 2 * k).setPosition(x, G, z)); });
+    treeMesh.instanceMatrix.needsUpdate = true;
+  }
 
   function boxEdges(b) {
     const x0 = b.x - b.w / 2, x1 = b.x + b.w / 2, y0 = b.y, y1 = b.y + b.h, z0 = b.z - b.d / 2, z1 = b.z + b.d / 2;
@@ -277,15 +335,45 @@ function start() {
   const sh = new Mesh(new PlaneGeometry(1, 1), new MeshBasicMaterial({ map: blobTexture(), transparent: true, depthWrite: false }));
   sh.scale.set(82, 46, 1); sh.rotation.x = -Math.PI / 2; sh.position.set(6, -3.2, 1.5); scene.add(sh);
 
-  // ---------- cahaya ----------
-  scene.add(new HemisphereLight(0xFFF3E4, 0x6B3A33, 1.55));
+  // ---------- cahaya: satu hari sepanjang gulir ----------
+  // 0 pagi (pembuka) · 1 siang di Surabaya · 2 senja di jembatan · 3 malam di Bangkalan · 4 fajar di atas rencana
+  // n: jendela dan lampu menyala · sk: latar malam · dw: latar senja/fajar
+  const hemi = new HemisphereLight(0xFFF3E4, 0x6B3A33, 1.55); scene.add(hemi);
   const sun = new DirectionalLight(0xFFE6C6, 2.1);
-  sun.position.set(-14, 34, 16); sun.target.position.set(6, 0, -2); scene.add(sun, sun.target);
+  const TG = new Vector3(6, 0, -2);
+  sun.target.position.copy(TG); scene.add(sun, sun.target);
   sun.castShadow = true;
-  Object.assign(sun.shadow.camera, { left: -40, right: 40, top: 32, bottom: -32, near: 1, far: 120 });
+  Object.assign(sun.shadow.camera, { left: -44, right: 44, top: 34, bottom: -34, near: 1, far: 160 });
   sun.shadow.camera.updateProjectionMatrix();
   sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.02;
-  renderer.shadowMap.needsUpdate = true;
+  const LK = [
+    { sky: new Color(0xFFEAD4), gnd: new Color(0x6B3A33), hi: 1.3, sc: new Color(0xFFD9AC), si: 2.3, sp: [36, 24, 10], n: 0, sk: 0, dw: 0 },
+    { sky: new Color(0xFFF3E4), gnd: new Color(0x6B3A33), hi: 1.55, sc: new Color(0xFFE6C6), si: 2.1, sp: [14, 34, 16], n: 0, sk: 0, dw: 0 },
+    { sky: new Color(0xF0B49C), gnd: new Color(0x4A1F2A), hi: 0.92, sc: new Color(0xFF9550), si: 2.5, sp: [-46, 10.5, 12], n: 0.4, sk: 0.12, dw: 1 },
+    { sky: new Color(0x8C6282), gnd: new Color(0x200A12), hi: 0.64, sc: new Color(0xC2A6D2), si: 0.75, sp: [-22, 30, 18], n: 1, sk: 1, dw: 0 },
+    { sky: new Color(0xC48E92), gnd: new Color(0x3A1620), hi: 0.9, sc: new Color(0xFFA86C), si: 1.9, sp: [46, 10, -8], n: 0.6, sk: 0.3, dw: 1 }
+  ];
+  const lightU = (s) => { const i = Math.min(LK.length - 2, Math.max(0, Math.floor(s))); return i + smooth(clamp((s - i - 0.16) / 0.68)); };
+  const WIN_DAY = new Color(0x7A6656), WIN_NIGHT = new Color(0xFFC872), DASH_DAY = new Color(0xA27C2C), DASH_NIGHT = new Color(0xE9C067);
+  const pinEl = stage.closest('.peta-pin');
+  let dark = -1, skL = -1, dwL = -1;
+  function light(u, g) {
+    const i = Math.min(LK.length - 2, Math.floor(u)), e = u - i, a = LK[i], b = LK[i + 1], mix = (k) => a[k] + (b[k] - a[k]) * e;
+    hemi.color.lerpColors(a.sky, b.sky, e); hemi.groundColor.lerpColors(a.gnd, b.gnd, e); hemi.intensity = mix('hi');
+    sun.color.lerpColors(a.sc, b.sc, e); sun.intensity = mix('si');
+    sun.position.set(TG.x + a.sp[0] + (b.sp[0] - a.sp[0]) * e, a.sp[1] + (b.sp[1] - a.sp[1]) * e, TG.z + a.sp[2] + (b.sp[2] - a.sp[2]) * e);
+    const n = mix('n'), sk = mix('sk'), dw = mix('dw'), lit = clamp((g - 0.72) / 0.28);
+    winMat.color.lerpColors(WIN_DAY, WIN_NIGHT, clamp(n * 1.6)); winMat.opacity = (0.3 + 0.7 * clamp(n * 1.6)) * lit;
+    lampMat.opacity = clamp(n * 1.8) * lit; headMat.opacity = clamp(n * 1.8);
+    dashMat.color.lerpColors(DASH_DAY, DASH_NIGHT, clamp(n * 1.6)); dashMat.opacity = clamp((g - 0.55) / 0.3);
+    edgeMat.opacity = (0.26 - 0.1 * n) * clamp((g - 0.8) / 0.2);
+    renderer.shadowMap.needsUpdate = true;
+    if (pinEl && (Math.abs(sk - skL) > 0.004 || Math.abs(dw - dwL) > 0.004 || dark < 0)) {
+      skL = sk; dwL = dw; dark = Math.max(sk, dw);
+      pinEl.style.setProperty('--night', sk.toFixed(3)); pinEl.style.setProperty('--dawn', dw.toFixed(3)); pinEl.style.setProperty('--dark', dark.toFixed(3));
+      pinEl.classList.toggle('night', dark > 0.22);
+    }
+  }
 
   // ---------- label (HTML, aria-hidden) ----------
   const layer = stage.querySelector('.peta-labels');
@@ -315,14 +403,18 @@ function start() {
   // o: geser fokus ke kanan (desktop) atau ke atas (HP) supaya tidak tertutup kartu keterangan
   // pw/pa: lebar dan sudut untuk layar tegak (HP); maket diputar supaya sumbu panjangnya mengikuti tinggi layar
   const K = [
-    { f: [8.5, 0.4, 0.5], w: 70, h: 31, az: 30, el: 36, o: 0.12, pw: 38, pa: 72, po: 0.1 },
-    { f: [-9.4, 1.8, -2.4], w: 19, h: 13, az: 26, el: 33, o: 0.16, pw: 15, pa: 58, po: 0.17 },
-    { f: [-0.6, 1.6, 0], w: 23, h: 12.5, az: 42, el: 24, o: 0.15, pw: 17, pa: 38, po: 0.17 },
-    { f: [10.4, 1.2, -6.4], w: 13, h: 9.5, az: 30, el: 37, o: 0.15, pw: 11, pa: 62, po: 0.17 },
-    { f: [31, 1.2, 0], w: 17, h: 13, az: 20, el: 41, o: 0.15, pw: 14, pa: 58, po: 0.17 }
+    { f: [8.5, 0.4, 0.5], w: 80, h: 35, az: 24, el: 31, o: 0.15, v: 0.08, pw: 40, pa: 72, po: 0.1 },
+    { f: [-9.4, 1.8, -2.4], w: 19, h: 13, az: 26, el: 33, o: 0.16, v: 0, pw: 15, pa: 58, po: 0.17 },
+    { f: [-0.6, 1.6, 0], w: 23, h: 12.5, az: 42, el: 24, o: 0.15, v: 0, pw: 17, pa: 38, po: 0.17 },
+    { f: [10.4, 1.2, -6.4], w: 13, h: 9.5, az: 30, el: 37, o: 0.15, v: 0, pw: 11, pa: 62, po: 0.17 },
+    { f: [31, 1.2, 0], w: 17, h: 13, az: 20, el: 41, o: 0.15, v: 0, pw: 14, pa: 58, po: 0.17 }
   ];
+  const KEYS = ['w', 'h', 'az', 'el', 'o', 'v', 'pw', 'pa', 'po'];
+  // KH: kota dan jembatan mengisi huruf di bagian atas layar; v/po menggeser maket ke atas
+  const KH = { f: [-13.5, 1.2, 0.2], w: 25, h: 12, az: 70, el: 35, o: 0, v: 0.27, pw: 8, pa: 66, po: 0.36 };
   const cam = new OrthographicCamera(-1, 1, 1, -1, 0.1, 400);
-  const cur = { ...K[0], f: [...K[0].f] };
+  const heroP = () => (POSTER ? 1 : parseFloat(track.dataset.h || '0'));
+  let cur;
   const D2R = Math.PI / 180, dir = new Vector3(), right = new Vector3(), up = new Vector3(), tgt = new Vector3(), pv = new Vector3();
   let W = 1, H = 1;
 
@@ -330,9 +422,13 @@ function start() {
     const i = Math.min(K.length - 2, Math.max(0, Math.floor(s)));
     const e = smooth(clamp((s - i - 0.16) / 0.68));
     const a = K[i], b = K[i + 1];
-    const o = {}; for (const key of ['w', 'h', 'az', 'el', 'o', 'pw', 'pa', 'po']) o[key] = a[key] + (b[key] - a[key]) * e;
-    o.f = a.f.map((v, k) => v + (b.f[k] - v) * e); return o;
+    const o = {}; for (const key of KEYS) o[key] = a[key] + (b[key] - a[key]) * e;
+    o.f = a.f.map((v, k) => v + (b.f[k] - v) * e);
+    const h = heroP();
+    if (h < 1) { const q = smooth(clamp((h - 0.1) / 0.9)); for (const key of KEYS) o[key] = KH[key] + (o[key] - KH[key]) * q; o.f = KH.f.map((v, k) => v + (o.f[k] - v) * q); }
+    return o;
   }
+  cur = goal(0);
   function place(st, ui) {
     const aspect = W / H, tall = aspect < 0.85;
     const vh = Math.max(st.h, (tall ? st.pw : st.w) / aspect), vw = vh * aspect;
@@ -341,7 +437,7 @@ function start() {
     dir.set(Math.sin(az) * Math.cos(el), Math.sin(el), Math.cos(az) * Math.cos(el));
     right.set(Math.cos(az), 0, -Math.sin(az)); up.crossVectors(dir, right);
     tgt.set(...st.f);
-    if (ui) { if (W >= 900 && aspect > 1.15) tgt.addScaledVector(right, -st.o * vw); else tgt.addScaledVector(up, -st.po * vh); }
+    if (ui) { if (W >= 900 && aspect > 1.15) tgt.addScaledVector(right, -st.o * vw).addScaledVector(up, -st.v * vh); else tgt.addScaledVector(up, -st.po * vh); }
     cam.position.copy(tgt).addScaledVector(dir, 120); cam.up.set(0, 1, 0); cam.lookAt(tgt);
     cam.updateMatrixWorld();
   }
@@ -350,19 +446,30 @@ function start() {
   // Kanvas hanya digambar ulang saat kamera bergerak atau sesaat setelah pengunjung menggulir.
   // Mobil dan perahu berhenti 4 detik setelah gulir terakhir, jadi tidak ada gerak terus-menerus (WCAG 2.2.2).
   let last = performance.now(), active = 0, shown = false, lastS = -1, wake = -1e9, dirty = true, hovered = null;
+  let grow = POSTER ? 1 : -1, lu = -1;
   function frame(now) {
-    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    const dt = Math.min(0.25, (now - last) / 1000); last = now;
     const s = POSTER ? 0 : parseFloat(track.dataset.s || '0');
     active = POSTER ? 0 : parseInt(track.dataset.i || '0', 10);
-    if (s !== lastS) { lastS = s; wake = now; }
+    const hp = heroP();
+    if (s + hp !== lastS) { lastS = s + hp; wake = now; }
     const moving = !POSTER && now - wake < 4000;
     const g = goal(s), k = POSTER ? 1 : 1 - Math.exp(-dt * 5.5);
     let delta = 0;
     cur.f = cur.f.map((v, i) => { const d = g.f[i] - v; delta = Math.max(delta, Math.abs(d)); return v + d * k; });
-    for (const key of ['w', 'h', 'az', 'el', 'o', 'pw', 'pa', 'po']) { const d = g[key] - cur[key]; delta = Math.max(delta, Math.abs(d)); cur[key] += d * k; }
-    if (shown && !moving && !dirty && delta < 0.002) return;
+    for (const key of KEYS) { const d = g[key] - cur[key]; delta = Math.max(delta, Math.abs(d)); cur[key] += d * k; }
+    // pembuka hanya dimainkan bila halaman dibuka dari atas
+    if (grow < 0) { grow = s > 0.3 ? 1 : 0; if (grow === 1) applyGrow(1); }
+    const growing = grow < 1;
+    if (growing) { grow = Math.min(1, grow + dt / 2.1); applyGrow(grow); }
+    const ug = POSTER ? WAKTU : lightU(s);
+    const du = lu < 0 ? 1 : Math.abs(ug - lu);
+    lu = lu < 0 || POSTER ? ug : lu + (ug - lu) * k;
+    if (shown && !moving && !dirty && !growing && delta < 0.002 && du < 0.002) return;
     dirty = false;
-    place(cur, !POSTER);
+    if (growing || du >= 0.0005 || dark < 0) light(lu, grow);
+    applyFill(POSTER ? 0 : s);
+    place(cur, !POSTER || QS.has('ui'));
 
     const t = now / 1000;
     for (const c of cars) {
