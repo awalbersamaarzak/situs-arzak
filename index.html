@@ -12,8 +12,9 @@
 <link rel="preload" href="/plus-jakarta-sans.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
 <script>
-/* Peta 3D hanya untuk peramban yang mendukung WebGL dan tidak meminta gerak dikurangi; selain itu tampil gambar diam. */
-if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'WebGLRenderingContext' in window && 'IntersectionObserver' in window) document.documentElement.classList.add('peta-live');
+/* Peta 3D untuk peramban yang mendukung WebGL; tanpa itu tampil gambar diam. Bila pengunjung meminta gerak dikurangi, peta tetap 3D dalam mode tenang: tanpa zum dan tanpa kamera terbang, tiap langkah berganti dengan pudar-silang. */
+if ('WebGLRenderingContext' in window && 'IntersectionObserver' in window) document.documentElement.classList.add('peta-live');
+if (matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('tenang');
 </script>
 
 <meta property="og:type" content="website">
@@ -233,6 +234,16 @@ h2, h3, .lead h1 { text-wrap: balance; }
 .peta-live .peta-stage img { display: none; }
 .peta-live .peta-stage canvas { display: block; position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity .7s ease; }
 .peta-live .peta-stage.ready canvas { opacity: 1; }
+/* mode tenang: pergantian langkah = pudar-silang, bukan gerak */
+.tenang .peta-stage.ready canvas { transition-duration: .35s; }
+.tenang .peta-stage.ready.ganti canvas { opacity: 0; transition-duration: .22s; }
+.tenang .peta-labels { transition: opacity .22s ease; }
+.tenang .peta-stage.ganti .peta-labels { opacity: 0; }
+.tenang .sky, .tenang .dawn { transition: opacity .35s ease; }
+.tenang .veil { transition: opacity .3s ease; }
+.tenang.peta-live .peta-steps > li { transform: none; }
+.tenang.peta-live .peta-track { height: 470vh; height: calc(100svh + 4 * 80svh + 45svh); }
+@media (max-width: 40rem) { .tenang.peta-live .peta-track { height: 400vh; height: calc(100svh + 4 * 65svh + 40svh); } }
 .peta-live .peta-labels { display: block; position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 .pl {
   position: absolute; left: 0; top: 0; white-space: nowrap; margin-top: -.55rem;
@@ -689,7 +700,7 @@ h2, h3, .lead h1 { text-wrap: balance; }
   const steps = [...track.querySelectorAll('.peta-steps > li')], ticks = [...track.querySelectorAll('.peta-ticks i')];
   const veil = pin.querySelector('.veil'), vp = veil.querySelector('path'), np = pin.querySelector('.nameplate'), waktu = pin.querySelector('.waktu');
   const WAKTU = ['Pagi', 'Siang', 'Senja', 'Malam', 'Fajar'];
-  const N = steps.length - 1, c01 = (v) => Math.min(1, Math.max(0, v));
+  const N = steps.length - 1, c01 = (v) => Math.min(1, Math.max(0, v)), tenang = root.classList.contains('tenang');
   /* titik zum: tengah garis miring huruf Z (satuan huruf, 1000 per em); FN = arah tegak lurus garis itu, FW = setengah tebalnya */
   const FX = 1657.75, FY = -372.5, FN = [0.8196, 0.5729], FW = 77.869;
   let cur = -1, barH = 0, queued = false, key = '', sc = 1, fx = 0, fy = 0, zmax = 40, HS = 1;
@@ -700,7 +711,7 @@ h2, h3, .lead h1 { text-wrap: balance; }
     sc = fs / 1000; fx = g.getBoundingClientRect().left - r.left + FX * sc; fy = np.getBoundingClientRect().top - r.top + 0.808 * fs + FY * sc;
     let m = 0;
     for (const [x, y] of [[0, 0], [r.width, 0], [0, r.height], [r.width, r.height]]) m = Math.max(m, Math.abs((x - fx) * FN[0] + (y - fy) * FN[1]));
-    zmax = 1.08 * m / (FW * sc); HS = Math.round(pin.offsetHeight * (innerWidth <= 640 ? 0.68 : 0.82)); key = '';
+    zmax = 1.08 * m / (FW * sc); HS = Math.round(pin.offsetHeight * (tenang ? (innerWidth <= 640 ? 0.42 : 0.47) : innerWidth <= 640 ? 0.68 : 0.82)); key = '';
   }
   function update() {
     queued = false;
@@ -713,8 +724,10 @@ h2, h3, .lead h1 { text-wrap: balance; }
     if (k2 !== key) {
       key = k2;
       if (h < 1) {
-        const t = c01((h - 0.05) / 0.93), z = Math.pow(zmax, 0.55 * t + 0.45 * t * t * (3 - 2 * t)), q = sc * z;
+        /* mode tenang: huruf tidak membesar; selubung memudar */
+        const t = tenang ? 0 : c01((h - 0.05) / 0.93), z = Math.pow(zmax, 0.55 * t + 0.45 * t * t * (3 - 2 * t)), q = sc * z;
         vp.setAttribute('transform', 'matrix(' + q + ' 0 0 ' + q + ' ' + (fx - FX * q) + ' ' + (fy - FY * q) + ')');
+        if (tenang) veil.style.opacity = h < 0.5 ? 1 : 0;
       }
       veil.style.display = h < 1 ? '' : 'none';
       pin.style.setProperty('--copy', (1 - c01((h - 0.03) / 0.2)).toFixed(3));
@@ -775,7 +788,7 @@ h2, h3, .lead h1 { text-wrap: balance; }
   }
   if (!track || !root.classList.contains('peta-live')) return;
   const fail = (e) => { lapor('impor gagal', e); const y0 = track.getBoundingClientRect().top; root.classList.remove('peta-live'); if (y0 < 0) scrollBy(0, track.getBoundingClientRect().top - y0); document.dispatchEvent(new Event('peta-diam')); };
-  import('/peta/peta.js?v=5').then(() => lapor('modul peta dimuat'), fail);
+  import('/peta/peta.js?v=6').then(() => lapor('modul peta dimuat'), fail);
 })();
 </script>
 </body>

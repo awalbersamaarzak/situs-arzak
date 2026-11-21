@@ -25,7 +25,11 @@ Situs profil ARZAK — perusahaan induk. Satu halaman statis, tanpa build, ditay
 
 ## Pembuka
 
-Layar pertama adalah selubung warna anggur dengan huruf ARZAK sebagai lubang (elemen `svg.veil` di `index.html`); peta terlihat di dalam hurufnya. Saat digulir, hurufnya membesar dari garis miring huruf Z sampai seluruh peta terbuka. Garis luar hurufnya diambil dari Plus Jakarta Sans 800, jadi tidak bergantung pada pemuatan huruf. Tanpa WebGL, dengan gerak dikurangi, atau bila `peta.js` gagal dimuat, pembuka menjadi blok anggur biasa dan peta menjadi gambar diam.
+Layar pertama adalah selubung warna anggur dengan huruf ARZAK sebagai lubang (elemen `svg.veil` di `index.html`); peta terlihat di dalam hurufnya. Saat digulir, hurufnya membesar dari garis miring huruf Z sampai seluruh peta terbuka. Garis luar hurufnya diambil dari Plus Jakarta Sans 800, jadi tidak bergantung pada pemuatan huruf. Tanpa WebGL, atau bila `peta.js` gagal dimuat, pembuka menjadi blok anggur biasa dan peta menjadi gambar diam.
+
+**Mode tenang.** Bila perangkat meminta gerak dikurangi (di iPhone: Pengaturan → Aksesibilitas → Gerakan → Kurangi Gerakan), peta tetap 3D tetapi tanpa gerak: huruf tidak membesar (selubung memudar), kamera tidak terbang (tiap langkah berganti dengan pudar-silang), mobil dan perahu diam. Kelas `tenang` di `<html>` dan konstanta `TENANG` di `peta.js` mengaturnya.
+
+**Alat periksa.** Buka `arzakbersama.com/?periksa` di perangkat yang bermasalah: kotak putih menampilkan jenis peramban, apakah peta 3D hidup, apakah gerak dikurangi, dukungan WebGL, dan pesan galat bila modul peta gagal.
 
 ## Mengubah peta 3D
 
