@@ -12,6 +12,8 @@ const stage = document.querySelector('.peta-stage');
 const track = document.querySelector('.peta-track');
 const QS = new URLSearchParams(location.search);
 const POSTER = QS.has('poster'), WAKTU = parseFloat(QS.get('waktu') || '0');
+// Mode tenang: pengunjung meminta gerak dikurangi. Peta tetap 3D, tetapi kamera tidak terbang: tiap langkah berganti dengan pudar-silang, dan tidak ada benda yang bergerak.
+const TENANG = !POSTER && matchMedia('(prefers-reduced-motion: reduce)').matches;
 if (stage && track) start();
 
 function start() {
@@ -418,17 +420,18 @@ function start() {
   const D2R = Math.PI / 180, dir = new Vector3(), right = new Vector3(), up = new Vector3(), tgt = new Vector3(), pv = new Vector3();
   let W = 1, H = 1;
 
-  function goal(s) {
+  function goal(s, h = heroP()) {
     const i = Math.min(K.length - 2, Math.max(0, Math.floor(s)));
     const e = smooth(clamp((s - i - 0.16) / 0.68));
     const a = K[i], b = K[i + 1];
     const o = {}; for (const key of KEYS) o[key] = a[key] + (b[key] - a[key]) * e;
     o.f = a.f.map((v, k) => v + (b.f[k] - v) * e);
-    const h = heroP();
     if (h < 1) { const q = smooth(clamp((h - 0.1) / 0.9)); for (const key of KEYS) o[key] = KH[key] + (o[key] - KH[key]) * q; o.f = KH.f.map((v, k) => v + (o.f[k] - v) * q); }
     return o;
   }
   cur = goal(0);
+  // mode tenang: keadaan yang sedang tampil (-1 = pembuka, 0..4 = langkah) dan saat pudar-silang dimulai
+  let snap = null, swap = 0;
   function place(st, ui) {
     const aspect = W / H, tall = aspect < 0.85;
     const vh = Math.max(st.h, (tall ? st.pw : st.w) / aspect), vw = vh * aspect;
@@ -446,15 +449,21 @@ function start() {
   // Kanvas hanya digambar ulang saat kamera bergerak atau sesaat setelah pengunjung menggulir.
   // Mobil dan perahu berhenti 4 detik setelah gulir terakhir, jadi tidak ada gerak terus-menerus (WCAG 2.2.2).
   let last = performance.now(), active = 0, shown = false, lastS = -1, wake = -1e9, dirty = true, hovered = null;
-  let grow = POSTER ? 1 : -1, lu = -1;
+  let grow = POSTER || TENANG ? 1 : -1, lu = -1;
   function frame(now) {
     const dt = Math.min(0.25, (now - last) / 1000); last = now;
-    const s = POSTER ? 0 : parseFloat(track.dataset.s || '0');
+    let s = POSTER ? 0 : parseFloat(track.dataset.s || '0'), hp = heroP();
     active = POSTER ? 0 : parseInt(track.dataset.i || '0', 10);
-    const hp = heroP();
+    if (TENANG) {
+      const want = hp < 0.5 ? -1 : Math.round(s);
+      if (snap === null) snap = want;
+      else if (want !== snap && !swap) { swap = now; stage.classList.add('ganti'); }
+      if (swap && now - swap > 240) { snap = want; swap = 0; stage.classList.remove('ganti'); dirty = true; }
+      s = Math.max(0, snap); hp = snap < 0 ? 0 : 1; active = s;
+    }
     if (s + hp !== lastS) { lastS = s + hp; wake = now; }
-    const moving = !POSTER && now - wake < 4000;
-    const g = goal(s), k = POSTER ? 1 : 1 - Math.exp(-dt * 5.5);
+    const moving = !POSTER && !TENANG && now - wake < 4000;
+    const g = goal(s, hp), k = POSTER || TENANG ? 1 : 1 - Math.exp(-dt * 5.5);
     let delta = 0;
     cur.f = cur.f.map((v, i) => { const d = g.f[i] - v; delta = Math.max(delta, Math.abs(d)); return v + d * k; });
     for (const key of KEYS) { const d = g[key] - cur[key]; delta = Math.max(delta, Math.abs(d)); cur[key] += d * k; }
@@ -462,9 +471,9 @@ function start() {
     if (grow < 0) { grow = s > 0.3 ? 1 : 0; if (grow === 1) applyGrow(1); }
     const growing = grow < 1;
     if (growing) { grow = Math.min(1, grow + dt / 2.1); applyGrow(grow); }
-    const ug = POSTER ? WAKTU : lightU(s);
+    const ug = POSTER ? WAKTU : TENANG ? s : lightU(s);
     const du = lu < 0 ? 1 : Math.abs(ug - lu);
-    lu = lu < 0 || POSTER ? ug : lu + (ug - lu) * k;
+    lu = lu < 0 || POSTER || TENANG ? ug : lu + (ug - lu) * k;
     if (shown && !moving && !dirty && !growing && delta < 0.002 && du < 0.002) return;
     dirty = false;
     if (growing || du >= 0.0005 || dark < 0) light(lu, grow);
