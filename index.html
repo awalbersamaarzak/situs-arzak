@@ -180,7 +180,7 @@ h2, h3, .lead h1 { text-wrap: balance; }
 .peta-live .peta-track { position: relative; height: 510vh; height: calc(100svh + 4 * 80svh + 80svh); }
 @media (max-width: 40rem) { .peta-live .peta-track { height: 450vh; height: calc(100svh + 4 * 65svh + 65svh); } }
 .peta-live .peta-pin {
-  position: sticky; top: var(--bar-h, 3.5rem); height: calc(100vh - var(--bar-h, 3.5rem)); height: calc(100svh - var(--bar-h, 3.5rem)); overflow: hidden;
+  position: sticky; top: var(--bar-h, 3.5rem); height: calc(100vh - var(--bar-h, 3.5rem)); height: calc(100svh - var(--bar-h, 3.5rem)); height: calc(100dvh - var(--bar-h, 3.5rem)); overflow: hidden; /* dvh: di HP, bilah peramban yang mengecil tidak meninggalkan celah di bawah peta */
   background: radial-gradient(110% 85% at 62% 38%, #FCF8F3 0%, var(--paper) 46%, var(--paper-2) 100%);
   border-bottom: 1px solid var(--rule);
 }
